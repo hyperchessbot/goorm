@@ -2,7 +2,7 @@ package adventofcode20201211
 
 object problem{
 	def solve():Unit = {  
-		val prefix = "src/main/scala/adventofcode/20201210/"
+		val prefix = "src/main/scala/adventofcode/20201211/"
 	  for(input <- List("example", "example2", "input").map(prefix + _)){    
 		println(s"\nfor '$input' :\n")
 
