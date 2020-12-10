@@ -1,3 +1,5 @@
 object Main extends App {
-  println("scala")
+	println("scala")
+	
+	adventofcode20201210.problem.solve()
 }
