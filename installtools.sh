@@ -26,6 +26,7 @@ echo "install scala"
 sudo apt-get install default-jdk -y
 wget www.scala-lang.org/files/archive/scala-2.13.0.deb
 sudo dpkg -i scala*.deb
+scalac -version
 
 echo "install sbt"
 echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
