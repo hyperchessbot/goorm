@@ -21,7 +21,7 @@ cached_key! {
 }
 
 pub fn solve(){
-	let mut records: Vec<usize> = fs::read_to_string("20201210/example2.txt")
+	let mut records: Vec<usize> = fs::read_to_string("20201210/input.txt")
         .unwrap()
         .split('\n')
         .map(|num| num.parse().unwrap())
