@@ -1,0 +1,14 @@
+#!/bin/bash
+
+ROOT="/workspace/Blank/goorm"
+
+echo "creating aliases"
+
+alias 'r'='cd $ROOT'
+alias 'cs'='cd $ROOT/scala/'
+alias 'css'='cs;cd src/main/scala'
+alias 'csa'='css;cd adventofcode'
+alias 'cr'='cd $ROOT/rust/'
+alias 'cra'='cr;cd adventofcode'
+
+alias
