@@ -17,5 +17,7 @@ bash installtools.sh
 ## Supported languages
 
 Scala ( sbt )
+
 Rust
+
 Python
