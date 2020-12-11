@@ -11,5 +11,6 @@ alias 'csa'='css;cd adventofcode'
 alias 'cr'='cd $ROOT/rust/'
 alias 'cra'='cr;cd adventofcode'
 alias 'sbt'='cs;sbt'
+alias 's'='r;cd snippets'
 
 alias
