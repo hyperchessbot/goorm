@@ -1,0 +1,24 @@
+[info] welcome to sbt 1.4.4 (Ubuntu Java 11.0.9.1)
+[info] loading project definition from /workspace/Blank/goorm/scala/project
+[info] loading settings for project scala from build.sbt ...
+[info] set current project to scala (in build file:/workspace/Blank/goorm/scala/)
+[info] running Main 
+scala
+----------------------
+example version 0 processing
+iterations 6, occupied 37
+example version 0 took 797 ms
+----------------------
+input version 0 processing
+iterations 78, occupied 2263
+input version 0 took 12023 ms
+----------------------
+example version 1 processing
+iterations 7, occupied 26
+example version 1 took 5 ms
+----------------------
+input version 1 processing
+iterations 83, occupied 2002
+input version 1 took 7509 ms
+----------------------
+[success] Total time: 27 s, completed Dec 11, 2020, 12:24:59 PM
