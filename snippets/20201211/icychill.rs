@@ -93,12 +93,12 @@ fn update_view(
     }
 }
 
-fn main() {
-    let mut records: Vec<Vec<char>> = fs::read_to_string("./src/bin/day11/input")
-        .unwrap()
+fn main() {	
+    let mut records: Vec<Vec<char>> = fs::read_to_string("input.txt")
+	.unwrap()
         .split('\n')
         .map(|x| x.chars().collect())
-        .collect();
+        .collect();	
     let nb_rows: usize = records.len();
     let nb_cols: usize = records[0].len();
     let lines = generate_lines(nb_rows, nb_cols);

@@ -1,3 +1,6 @@
+import time
+
+
 def main(raw_input):
     seats = parse_input(raw_input)
     new_seats = update_seats(seats)
@@ -88,5 +91,8 @@ def seat_in_sight_occupied(seats, seat_y, seat_x, y_direction, x_direction):
 
 
 if __name__ == '__main__':
+    start = time.time()
     puzzle_input = get_input('input.txt')
     print(main(puzzle_input))
+    elapsed = time.time() - start
+    print("elapsed {:.2f} s".format(elapsed))
