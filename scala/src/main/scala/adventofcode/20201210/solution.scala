@@ -1,4 +1,4 @@
-package adventofcode20201211
+package adventofcode20201210
 
 import scala.language.postfixOps
 import utils._
