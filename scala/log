@@ -6,19 +6,19 @@
 scala
 ----------------------
 example version 0 processing
-iterations 6, occupied 37
-example version 0 took 797 ms
+ship at pos Vect(17, 8) waypoint None dist 25
+example version 0 took 127 ms
 ----------------------
 input version 0 processing
-iterations 78, occupied 2263
-input version 0 took 12023 ms
+ship at pos Vect(1423, 634) waypoint None dist 2057
+input version 0 took 17 ms
 ----------------------
 example version 1 processing
-iterations 7, occupied 26
-example version 1 took 5 ms
+ship at pos Vect(214, 72) waypoint Some(Vect(4, 10)) dist 286
+example version 1 took 186 ms
 ----------------------
 input version 1 processing
-iterations 83, occupied 2002
-input version 1 took 7509 ms
+ship at pos Vect(24271, 47233) waypoint Some(Vect(-74, -42)) dist 71504
+input version 1 took 21 ms
 ----------------------
-[success] Total time: 27 s, completed Dec 11, 2020, 12:24:59 PM
+[success] Total time: 8 s, completed Dec 12, 2020, 7:15:17 AM
