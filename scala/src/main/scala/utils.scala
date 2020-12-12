@@ -14,4 +14,30 @@ package object utils{
 		}		
 		result
 	}
+	
+	case class IntVect(x:Int, y:Int){
+		def add(v:IntVect):IntVect = {
+			IntVect(x + v.x, y + v.y)
+		}
+		
+		def mult(s:Int):IntVect = {
+			IntVect(x * s, y * s)
+		}
+		
+		def rot():IntVect = {
+			IntVect(y, -x)
+		}
+		
+		def turn(d:Int):IntVect = {			
+			var times = (d / 90).abs % 4			
+			if(d < 0) times = (4 - times) % 4
+			var current = IntVect(x, y)			
+			for(i <- 0 until times) current = current.rot()
+			current
+		}
+		
+		override def toString():String = s"Vect($x, $y)"
+		
+		def manhattan:Int = x.abs + y.abs
+	}
 }
