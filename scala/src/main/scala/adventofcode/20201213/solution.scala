@@ -29,7 +29,7 @@ object problem{
 		println(bestBus * diff)
 	}
 	
-	def solve2(lines:List[String]):Unit = {
+	def solve2brute(lines:List[String]):Unit = {
 		val reqBuses = lines(1).split(",").map(str => if(str == "x") 0 else str.toLong).toList
 		val buses = reqBuses.filter(_ != 0).toList
 		
@@ -50,6 +50,23 @@ object problem{
 			if(!ok) i += 1			
 		}		
 		println(i)
+	}
+	
+	def solve2(lines:List[String]):Unit = {
+		val reqBuses = lines(1).split(",").zipWithIndex.filter(_._1 != "x").map(bus => bus._2 -> bus._1.toLong).toList
+		
+		var jump = reqBuses(0)._2
+		
+		var timeStamp = 0L
+		
+		for((index, bus) <- reqBuses.tail){
+			while((timeStamp + index) % bus != 0){
+				timeStamp += jump	
+			}            
+        	jump *= bus
+		}
+		
+		println(timeStamp)
 	}
 	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
