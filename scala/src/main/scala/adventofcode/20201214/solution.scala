@@ -5,6 +5,8 @@ import utils._
 import table._
 
 object problem{	
+	println(s"package name ${problem.getClass.getName.split("\\.")(0)}")
+	
 	val packageDate = "([0-9]+)".r.findFirstMatchIn(problem.getClass.getName).get
 	
 	val prefix = s"src/main/scala/adventofcode/$packageDate/"
