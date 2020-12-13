@@ -30,7 +30,26 @@ object problem{
 	}
 	
 	def solve2(lines:List[String]):Unit = {
-		println("solve2")
+		val reqBuses = lines(1).split(",").map(str => if(str == "x") 0 else str.toLong).toList
+		val buses = reqBuses.filter(_ != 0).toList
+		
+		var i = 0L
+		var ok = false
+		
+		while((i < 2000000)&&(!ok)){
+			ok = true						
+			var found = Set[Int]()
+			for(j <- 0 until reqBuses.length if ok){								
+				for(bus <- buses if ok){
+					val hasBus = (i + j) % bus == 0
+					if(reqBuses(j) != 0) if(hasBus && (reqBuses(j) == bus)) found = found + j
+					if(hasBus && (reqBuses(j) == 0)) ok = false
+				}
+			}			
+			if(found.size < buses.length) ok = false			
+			if(!ok) i += 1			
+		}		
+		println(i)
 	}
 	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
