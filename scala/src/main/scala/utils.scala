@@ -40,4 +40,27 @@ package object utils{
 		
 		def manhattan:Int = x.abs + y.abs
 	}
+	
+	val parseBinaryToLongChunkSize = 16
+	
+	def parseBinaryToLong(binary:String):Long = {
+		var buffer = 0L
+		var current = binary
+		
+		do{
+			buffer *= ( 1L << Math.min(parseBinaryToLongChunkSize, current.length) )
+			
+			if(current.length <= parseBinaryToLongChunkSize){
+				buffer += Integer.parseInt(current, 2)
+				
+				return buffer
+			}
+
+			buffer += Integer.parseInt(current.substring(0, parseBinaryToLongChunkSize), 2)
+
+			current = current.substring(parseBinaryToLongChunkSize)
+		}while(current.length > 0)
+		
+		buffer
+	}
 }

@@ -13,12 +13,6 @@ object problem{
 	
 	val memSize = 36
 	
-	def parseLong(str:String):Long = {
-		val high = Integer.parseInt(str.substring(0, memSize / 2), 2).toLong
-		val low = Integer.parseInt(str.substring(memSize / 2, memSize), 2).toLong
-		(high << (memSize / 2)) + low
-	}
-	
 	case class Instruction(instrStr:String){
 		val parts = instrStr.split(" = ")
 		var command = parts(0)
@@ -31,10 +25,10 @@ object problem{
 		var value:Long = 0
 		command match {
 			case "mask" => {
-				andMask = parseLong(arg.replaceAll("X|1", "1"))
-				orMask = parseLong(arg.replaceAll("X|0", "0"))
-				floatMask = parseLong(arg.replaceAll("1|0", "0").replaceAll("X", "1"))				
-				floatDisableMask = parseLong(arg.replaceAll("1|0", "1").replaceAll("X", "0"))				
+				andMask = parseBinaryToLong(arg.replaceAll("X|1", "1"))
+				orMask = parseBinaryToLong(arg.replaceAll("X|0", "0"))
+				floatMask = parseBinaryToLong(arg.replaceAll("1|0", "0").replaceAll("X", "1"))				
+				floatDisableMask = parseBinaryToLong(arg.replaceAll("1|0", "1").replaceAll("X", "0"))				
 			}
 			case _ => {
 				address = command.split("\\[|\\]")(1).toLong
