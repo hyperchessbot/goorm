@@ -1,0 +1,16 @@
+echo "preparing $1"
+
+DIR="202012$1"
+
+rm -r "$DIR"
+cp -avr template "$DIR"
+
+REGEX="s/xx/$1/"
+
+sed -i "$REGEX" "$DIR/solution.scala"
+
+g "$DIR/solution.scala"
+sleep 5
+g "$DIR/example.txt"
+sleep 5
+g "$DIR/input.txt"
