@@ -9,6 +9,10 @@ REGEX="s/xx/$1/"
 
 sed -i "$REGEX" "$DIR/solution.scala"
 
+REGEX="s/adventofcode202012../adventofcode202012$1/"
+
+sed -i "$REGEX" "../Main.scala"
+
 g "$DIR/solution.scala"
 sleep 5
 g "$DIR/example.txt"
