@@ -70,10 +70,12 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % 
 //       organization := "ch.epfl.scala",
 //       scalaVersion := "2.13.3"
 //     )),
-//     name := "scala"
+//     name := "scala"		
 //   )
 
 // To learn more about multi-project builds, head over to the official sbt
 // documentation at http://www.scala-sbt.org/documentation.html
+
+Compile / unmanagedSourceDirectories += baseDirectory.value / "utils"
 
 scalacOptions ++= Seq("-deprecation", "-feature")

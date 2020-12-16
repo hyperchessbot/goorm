@@ -14,7 +14,10 @@ object problem{
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 			
-	
+		if(input._1 != "example") return
+		if(input._2 != 0) return
+		
+		
 	}
 	
 	def solve():Unit = {
