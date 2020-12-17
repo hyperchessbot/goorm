@@ -1,4 +1,62 @@
 package object utils{	
+	// max coord display length for vector
+	val maxCoordLength = 10
+	
+	// trim a string to max number of characters
+	def ellipsis(str:String, max: Int):String = {
+		val l = str.length
+		if(l <= max) return str
+		return str.substring(0, max - 2) + ".."
+	}
+
+	// base class of vect
+	abstract class Vect[T](setCoords: Seq[T]){
+		val coords = scala.collection.mutable.ArrayBuffer[T](setCoords: _*)
+		def add(a:T, b:T):T
+		def mult(a:T, b:T):T
+		def zero:T
+		def newVect(setCoords: Seq[T]):Vect[T]  
+		override def toString():String = s"Vect[${coords.map(str => ellipsis(str.toString, maxCoordLength)).mkString(",")}]"
+		def createSynced(v:Vect[T]):Vect[T] = {
+			val temp = newVect(coords.toSeq)
+			while(temp.coords.length < v.coords.length) temp.coords += zero    
+			temp
+	  	}
+		
+		def +(v:Vect[T]):Vect[T] = {
+			val temp = createSynced(v)
+			for(i <- 0 until v.coords.length) temp.coords(i) = add(temp.coords(i), v.coords(i))
+			temp
+		}
+  
+		def *(s:T):Vect[T] = {
+			val temp = createSynced(this)
+			for(i <- 0 until temp.coords.length) temp.coords(i) = mult(temp.coords(i), s)
+			temp
+		}
+	}
+
+	// dervied Int vect
+	class IntegerVect(setCoords: Seq[Int]) extends Vect[Int](setCoords: Seq[Int]){
+		def add(a: Int, b:Int) = a + b
+		def mult(a: Int, b: Int) = a * b
+		def zero:Int = 0
+		def newVect(setCoords: Seq[Int]) = new IntegerVect(setCoords)
+	}
+
+	// derived Double vect
+	class DoubleVect(setCoords: Seq[Double]) extends Vect[Double](setCoords: Seq[Double]){
+		def add(a: Double, b:Double) = a + b
+		def mult(a: Double, b: Double) = a * b
+		def zero:Double = 0.0
+		def newVect(setCoords: Seq[Double]) = new DoubleVect(setCoords)
+	}
+
+	object Vect{
+		def apply(setCoords: Int*):IntegerVect = new IntegerVect(setCoords)
+		def apply(setCoords: Double*):DoubleVect = new DoubleVect(setCoords)
+	}
+	
 	def getLinesOf(path:String):List[String] = scala.io.Source.fromFile(path).getLines().toList	
 	
 	def p(content:String):Unit = println(content)

@@ -13,7 +13,6 @@ object problem{
 	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
-			
 	
 	}
 	
