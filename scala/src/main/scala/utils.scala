@@ -171,6 +171,16 @@ package object utils{
 			
 			(current, List())
 		}
+		
+		def evaluate(expressionStr:String, usePrecedence:Boolean = true):Double = {
+			val terms = ExpressionParser.toTerms(expressionStr)		
+			
+			val grouped:List[Term] = if(usePrecedence) ExpressionParser.groupByPrecedence(ExpressionParser.Operator("+"), terms)._1 else terms
+			
+			val value = ExpressionParser.eval(0.0, grouped)._1
+			
+			value
+		}
 	}
 	
 	// max coord display length for vector

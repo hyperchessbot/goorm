@@ -146,13 +146,9 @@ object problem{
 		var sum1 = 0.0
 		var sum2 = 0.0
 		
-		lines.foreach(line => {
-			val terms = ExpressionParser.toTerms(line)
-			val value1 = ExpressionParser.eval(0.0, terms)._1
-			sum1 += value1			
-			val grouped = ExpressionParser.groupByPrecedence(ExpressionParser.Operator("+"), terms)			
-			val value2 = ExpressionParser.eval(0.0, grouped._1)._1
-			sum2 += value2			
+		lines.foreach(line => {			
+			sum1 += ExpressionParser.evaluate(line, false)			
+			sum2 += ExpressionParser.evaluate(line)			
 		})
 		
 		println(sum1.toLong)
