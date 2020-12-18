@@ -143,6 +143,23 @@ object problem{
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
+		var sum1 = 0.0
+		var sum2 = 0.0
+		
+		lines.foreach(line => {
+			val terms = ExpressionParser.toTerms(line)
+			val value1 = ExpressionParser.eval(0.0, terms)._1
+			sum1 += value1			
+			val grouped = ExpressionParser.groupByPrecedence(ExpressionParser.Operator("+"), terms)			
+			val value2 = ExpressionParser.eval(0.0, grouped._1)._1
+			sum2 += value2			
+		})
+		
+		println(sum1.toLong)
+		println(sum2.toLong)
+		
+		return
+		
 		var sum = 0L
 		
 		if(input._2 == 0) return
@@ -167,7 +184,7 @@ object problem{
 	def solve():Unit = {
 		val delim = "----------------------"
 		
-		for(input <- List(("example", 0), ("input", 0), ("example2", 1), ("input", 1))) time(input._1 + " version " + input._2.toString(), "ms", {    
+		for(input <- List(("input", 0))) time(input._1 + " version " + input._2.toString(), "ms", {    
 			println (s"$delim\n$packageDate ${input._1} version ${input._2} processing")
 			
 			solveInput(input)

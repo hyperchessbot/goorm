@@ -1,4 +1,178 @@
 package object utils{	
+	object ExpressionParser{
+		def toRawTerms(expressionStr:String):List[String] = {
+			expressionStr.replaceAll("\\)", " )").replaceAll("\\(", "( ").split(" ").filter(_ != " ").toList
+		}
+		
+		sealed trait Term{
+			def execute(current:Double, value:Double):Double = {
+				value
+			}
+		}
+		
+		case object EmptyTerm extends Term
+		
+		sealed trait GroupingTerm extends Term
+		
+		case object OpeningParenthesis extends GroupingTerm
+		case object ClosingParenthesis extends GroupingTerm
+		
+		case class Operator(kind:String) extends Term{
+			override def execute(current:Double, value:Double):Double = {
+				kind match {
+					case "+" => current + value
+					case "*" => current * value
+					case _ => current
+				}
+			}
+		}
+		
+		sealed trait ValueTerm extends Term
+		
+		case class IntegerLiteral(val value:Int) extends ValueTerm
+		
+		object Term{
+			def apply(termStr:String):Term = {
+				termStr match {
+					case "(" => OpeningParenthesis
+					case ")" => ClosingParenthesis
+					case "+" => Operator("+")
+					case "*" => Operator("*")
+					case _ => {
+						IntegerLiteral(termStr.toInt)
+					}
+				}
+			}
+		}
+		
+		def toTerms(termStr:String):List[Term] = {
+			toRawTerms(termStr).map(Term(_))
+		}
+		
+		def groupByPrecedence(precedenceOperator:Operator, terms:List[Term]):Tuple2[List[Term], List[Term]] = {
+			var acc = List[Term]()
+			var open = false
+			
+			if(terms.length == 0) return (acc, acc)
+			
+			var head = terms.head
+			var tail = terms.tail
+			
+			var lastWholeTermIndex = 0
+			
+			do{
+				head match {
+					case OpeningParenthesis => {						
+						val result = groupByPrecedence(precedenceOperator, tail)
+						
+						lastWholeTermIndex = acc.length						
+						acc = acc :+ OpeningParenthesis :++ result._1
+						
+						if(open){
+							acc = acc :+ ClosingParenthesis
+							open = false
+						}
+						
+						tail = result._2
+					}
+					
+					case ClosingParenthesis => {
+						return (acc :+ ClosingParenthesis, tail)
+					}
+					
+					case IntegerLiteral(_) => {
+						lastWholeTermIndex = acc.length						
+						
+						acc = acc :+ head
+						
+						if(open){
+							acc = acc :+ ClosingParenthesis
+							open = false
+						}
+					}
+					
+					case Operator(kind) => {
+						kind match {
+							case precedenceOperator.kind => {
+								val before = acc.slice(0, lastWholeTermIndex)
+								val after = acc.slice(lastWholeTermIndex, acc.length)
+								
+								open = true
+								
+								acc = before :+ OpeningParenthesis :++ after :+ head
+							}
+							
+							case _ => {
+								acc = acc :+ head
+							}
+						}
+					}
+					
+					case _ => {
+						println("unkown term", head)
+						
+						acc = acc :+ head
+					}
+				}
+				
+				if(tail.length == 0) return (acc, List())
+				
+				head = tail.head
+				tail = tail.tail
+			}while(true)
+			
+			(acc, List())
+		}
+		
+		def eval(setCurrent:Double, terms:List[Term]):Tuple2[Double, List[Term]] = {
+			var current = setCurrent
+			
+			if(terms.length == 0) return (current, List())
+			
+			var head = terms.head
+			var tail = terms.tail
+			
+			var currentOp:Term = EmptyTerm
+			
+			do{
+				head match {
+					case OpeningParenthesis => {
+						val result = eval(current, tail)
+						
+						tail = result._2
+						
+						current = currentOp.execute(current, result._1)						
+					}
+					
+					case ClosingParenthesis => {
+						return (current, tail)
+					}
+					
+					case IntegerLiteral(value) => {						
+						current = currentOp.execute(current, value.toDouble)						
+					}
+					
+					case Operator(_) => {
+						currentOp = head
+					}
+					
+					case _ => {
+						println("unkown term")
+					}
+				}				
+				
+				if(tail.length == 0){
+					return (current, List())
+				}
+				
+				head = tail.head
+				tail = tail.tail
+			}while(true)
+			
+			(current, List())
+		}
+	}
+	
 	// max coord display length for vector
 	val maxCoordLength = 10
 	
