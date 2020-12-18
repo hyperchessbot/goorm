@@ -147,6 +147,9 @@ object problem{
 		var sum2 = 0.0
 		
 		lines.foreach(line => {			
+			println(line)
+			println(ExpressionParser.groupByPrecedenceAsString(line))
+			
 			sum1 += ExpressionParser.evaluate(line, false)			
 			sum2 += ExpressionParser.evaluate(line)			
 		})

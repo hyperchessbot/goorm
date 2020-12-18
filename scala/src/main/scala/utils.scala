@@ -14,8 +14,13 @@ package object utils{
 		
 		sealed trait GroupingTerm extends Term
 		
-		case object OpeningParenthesis extends GroupingTerm
-		case object ClosingParenthesis extends GroupingTerm
+		case object OpeningParenthesis extends GroupingTerm{
+			override def toString():String = "("
+		}
+		
+		case object ClosingParenthesis extends GroupingTerm{
+			override def toString():String = ")"
+		}
 		
 		case class Operator(kind:String) extends Term{
 			override def execute(current:Double, value:Double):Double = {
@@ -25,11 +30,15 @@ package object utils{
 					case _ => current
 				}
 			}
+			
+			override def toString():String = kind
 		}
 		
 		sealed trait ValueTerm extends Term
 		
-		case class IntegerLiteral(val value:Int) extends ValueTerm
+		case class IntegerLiteral(val value:Int) extends ValueTerm{
+			override def toString():String = value.toString
+		}
 		
 		object Term{
 			def apply(termStr:String):Term = {
@@ -48,6 +57,8 @@ package object utils{
 		def toTerms(termStr:String):List[Term] = {
 			toRawTerms(termStr).map(Term(_))
 		}
+		
+		def termsToString(terms:List[Term]):String = terms.map(_.toString).mkString(" ")
 		
 		def groupByPrecedence(precedenceOperator:Operator, terms:List[Term]):Tuple2[List[Term], List[Term]] = {
 			var acc = List[Term]()
@@ -180,6 +191,14 @@ package object utils{
 			val value = ExpressionParser.eval(0.0, grouped)._1
 			
 			value
+		}
+		
+		def groupByPrecedenceAsString(expressionStr:String) = {
+			val terms = toTerms(expressionStr)
+			
+			val grouped = ExpressionParser.groupByPrecedence(ExpressionParser.Operator("+"), terms)._1
+			
+			termsToString(grouped)
 		}
 	}
 	
