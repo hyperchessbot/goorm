@@ -140,22 +140,85 @@ object problem{
 		(List(), List())
 	}
 	
+	def removePars(setTerms:Array[String]):Array[String] = {
+		var terms = setTerms
+		for(i <- 1 until terms.length - 1){
+			if((terms(i - 1) == "(")&&(terms(i + 1)== ")")){
+				terms(i - 1) = " "
+				terms(i + 1) = " "
+				terms = terms.filter(_ != " ")
+				return removePars(terms)
+			}
+		}	
+		terms = terms.filter(_ != " ")
+		terms
+	}
+		
+	def removeOp(setTerms:Array[String], op:String):Array[String] = {
+		var terms = setTerms
+		var ok = false
+		for(i <- 1 until terms.length - 1){
+			if(terms(i) == op){
+				if((terms(i-1) != ")")&&(terms(i+1) != "(")){
+					ok = true				
+					if(op == "*"){
+						if(i > 1) if(terms(i - 2) == "+") ok = false
+						if(i < terms.length - 2) if(terms(i + 2) == "+") ok = false
+					}
+					if(ok){
+						terms(i) = if(op == "+") (terms(i-1).toLong + terms(i+1).toLong).toString else (terms(i-1).toLong * terms(i+1).toLong).toString
+						terms(i-1) = " "
+						terms(i+1) = " "											
+						terms = removePars(terms)						
+						return removeOp(terms, op)
+					}
+				}
+			}
+		}
+		
+		terms = removePars(terms)
+		terms
+	}
+	
+	def doCycle(setTerms:Array[String]):Long = {
+		var terms = setTerms
+		do{			
+			terms = removeOp(terms, "+")
+			//println(terms.toList)			
+			terms = removeOp(terms, "*")						
+			//println(terms.toList)
+		}while(terms.length > 1)			
+		terms(0).toLong
+	}
+	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
 		var sum1 = 0.0
 		var sum2 = 0.0
+		var sum3 = 0L
 		
 		lines.foreach(line => {			
-			println(line)
-			println(ExpressionParser.groupByPrecedenceAsString(line))
+			//println(line)
+			//println(ExpressionParser.groupByPrecedenceAsString(line))
+			
+			val terms = line.replaceAll("\\)", " )").replaceAll("\\(", "( ").split(" ")
+			
+			val cyc = doCycle(terms)
+			
+			sum3 += cyc
+			
+			val value2 = ExpressionParser.evaluate(line)			
+			
+			//println(cyc, value2.toLong)
 			
 			sum1 += ExpressionParser.evaluate(line, false)			
-			sum2 += ExpressionParser.evaluate(line)			
+			sum2 += value2
 		})
 		
 		println(sum1.toLong)
 		println(sum2.toLong)
+		println(sum3)
 		
 		return
 		
