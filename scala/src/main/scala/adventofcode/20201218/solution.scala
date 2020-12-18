@@ -48,13 +48,113 @@ object problem{
 		(current, List())
 	}
 	
+	def precedence(setTerms:List[String]):Tuple2[List[String], List[String]] = {
+		var term = setTerms.head
+		var rest = setTerms.tail
+		
+		var acc = List[String]()
+		
+		var open = false
+		
+		do{			
+			
+			term match {
+				case "(" => {
+					val result = precedence(rest)					
+					acc = acc :+ "(" :++ result._1					
+					if(open) acc = acc :+ ")"
+					open = false
+					rest = result._2
+				}
+				
+				case ")" => {										
+					return (acc :+ ")", rest)				
+				}
+				
+				case "+" => {
+					open = true
+					
+					var level = 0
+					var temp = List[String]()
+					
+					var ok = true
+					
+					do{
+						if(acc.length == 0){
+							ok = false
+							acc = "(" +: temp							
+						}else{
+							val last = acc.last
+							
+							last match {
+								case ")" => {
+									level += 1
+									acc = acc.init
+									temp = last +: temp
+								}
+								
+								case "(" => {
+									level -= 1
+									acc = acc.init
+									temp = last +: temp
+									if(level == 0){
+										acc = acc :+ "(" :++ temp
+										ok = false
+									}
+								}
+								
+								case "+" | "-" => {
+									acc = acc.init
+									temp = last +: temp
+								}
+								
+								case _ => {
+									acc = acc.init
+									temp = last +: temp
+									if(level == 0){
+										acc = acc :+ "("
+										acc = acc :++ temp
+										ok = false
+									}
+								}
+							}
+						}
+					}while(ok)
+					
+					acc = acc :+ "+"
+				}
+				
+				case _ => {					
+					acc = acc :+ term
+					if(open) acc = acc :+ ")"
+					open = false
+				}
+			}
+			
+			if(rest.length == 0) return (acc, List())
+			
+			term = rest.head
+			rest = rest.tail
+		}while(true)
+		
+		(List(), List())
+	}
+	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
 		var sum = 0L
 		
+		if(input._2 == 0) return
+		
 		lines.foreach(line => {
-			val terms = line.replaceAll("\\)", " )").replaceAll("\\(", "( ").split(" ").toList
+			var terms = line.replaceAll("\\)", " )").replaceAll("\\(", "( ").split(" ").toList
+			
+			if(input._2 == 1){
+				val result = precedence(terms)
+				terms = result._1
+				println(terms)
+			}
 			
 			val value = eval(terms, "", 0, 0)._1
 			
