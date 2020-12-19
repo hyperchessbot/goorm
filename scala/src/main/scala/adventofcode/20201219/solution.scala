@@ -10,27 +10,7 @@ object problem{
 	val packageDate = "([0-9]+)".r.findFirstMatchIn(problem.getClass.getName).get
 	
 	val prefix = s"src/main/scala/adventofcode/$packageDate/"
-	
-	case class Rule(ruleStr:String){		
-		val parts = ruleStr.split(": ").toList
 		
-		val index = parts(0).toInt
-		
-		var subrules = List[String]()
-		var letter = ""
-		
-		if(parts(1).contains("\"")){
-			val parts2 = parts(1).split("\"")
-			letter = parts2(1)
-		}else{
-			subrules = parts(1).split(" \\| ").toList		
-		}
-		
-		override def toString():String = s"[Rule $index = $letter $subrules]"
-		
-		def tuple = index -> this
-	}
-	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
@@ -39,41 +19,15 @@ object problem{
 		if(lines.length > 0){
 			val parts = lines.mkString("\n").split("\n\n").toList
 		
-			val rules = parts(0).split("\n").map(Rule(_).tuple).toMap
-						
-			var good = 0
+			var rules = parts(0).split("\n").map(line => {val parts = line.split(":");(parts(0), parts(1))}).toMap
 			
-			def check(tokens:String):Boolean = {				
-				if(tokens == " 0 ") return true
+			while(rules.size > 1){
+				val k = rules.keySet.find(!rules(_).exists(Character.isDigit(_))).get; val v = rules(k)
 				
-				for((key, rule) <- rules){
-					if(rule.letter != ""){
-						if(tokens.contains(rule.letter)){
-							val result = check(tokens.replaceAll(rule.letter, key.toString))
-							if(result) return true
-						}						
-					}else{
-						for(subrule <- rule.subrules){
-							if(tokens.contains(" " + subrule + " ")){								
-								val result = check(tokens.replaceAll(" " + subrule + " ", " " + key.toString + " "))
-								if(result) return true
-							}							
-						}
-					}
-				}
-				
-				false
+				rules = (for((k1, v1) <- rules; if k1 != k) yield k1 -> ("\\b"+ k + "\\b").r.replaceAllIn(s"$v1", s"($v)")).toMap
 			}
 			
-			parts(1).split("\n").foreach(msg => {				
-				val result = check(" " + msg.split("").mkString(" ") + " ")
-				
-				if(result) good += 1
-				
-				println(msg, result, good)
-			})
-			
-			println("good", good)
+			println(parts(1).split("\n").count(_.matches(("^" + rules("0").replaceAll("[ \"]", "") + "$"))))
 		}
 	}
 	
