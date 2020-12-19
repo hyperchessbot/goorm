@@ -1,4 +1,10 @@
+import java.io.PrintWriter
+
 package object utils{	
+	def writeStringToFile(path:String, content:String):Unit = {
+		new PrintWriter(path) { write(content); close }
+	}
+	
 	object ExpressionParser{
 		def toRawTerms(expressionStr:String):List[String] = {
 			expressionStr.replaceAll("\\)", " )").replaceAll("\\(", "( ").split(" ").filter(_ != " ").toList

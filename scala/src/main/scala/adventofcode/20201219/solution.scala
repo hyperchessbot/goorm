@@ -35,7 +35,12 @@ object problem{
 				rules = (for((k1, v1) <- rules; if k1 != k) yield k1 -> s"\\b$k\\b".r.replaceAllIn(v1, s"($v)")).toMap
 			}
 			
-			println(inputParts(1).split("\n").count(_.matches(("^" + rules("0").replaceAll("[ \"]", "") + "$"))))
+			val pattern = ("^" + rules("0").replaceAll("[ \"]", "") + "$")
+			
+			writeStringToFile(s"$prefix${input._1}_out_part$part", pattern)
+			
+			println(inputParts(1).split("\n").count(_.matches(pattern)))
+			
 		}
 	}
 	
