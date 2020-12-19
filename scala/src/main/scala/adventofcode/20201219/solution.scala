@@ -17,9 +17,16 @@ object problem{
 		//if(input._1 != "example") return
 		
 		if(lines.length > 0){
-			val parts = lines.mkString("\n").split("\n\n").toList
+			val part = input._2 + 1
+			
+			val inputParts = lines.mkString("\n").split("\n\n").toList
 		
-			var rules = parts(0).split("\n").map(line => {val parts = line.split(":");(parts(0), parts(1))}).toMap
+			var rules = inputParts(0).split("\n").map(line => {val parts = line.split(":");(parts(0), parts(1))}).toMap
+			
+			if(part == 2){
+				rules = rules + ("8" -> "42+")
+				rules = rules + ("11" -> "42 31 |42 42 31 31 |42 42 42 31 31 31 |42 42 42 42 31 31 31 31 |42 42 42 42 42 31 31 31 31 31 |42 42 42 42 42 42 31 31 31 31 31 31 |42 42 42 42 42 42 42 31 31 31 31 31 31 31 |42 42 42 42 42 42 42 42 31 31 31 31 31 31 31 31 |42 42 42 42 42 42 42 42 42 31 31 31 31 31 31 31 31 31 ")
+			}
 			
 			while(rules.size > 1){
 				val k = rules.keySet.find(!rules(_).exists(Character.isDigit(_))).get; val v = rules(k)
@@ -27,7 +34,7 @@ object problem{
 				rules = (for((k1, v1) <- rules; if k1 != k) yield k1 -> ("\\b"+ k + "\\b").r.replaceAllIn(s"$v1", s"($v)")).toMap
 			}
 			
-			println(parts(1).split("\n").count(_.matches(("^" + rules("0").replaceAll("[ \"]", "") + "$"))))
+			println(inputParts(1).split("\n").count(_.matches(("^" + rules("0").replaceAll("[ \"]", "") + "$"))))
 		}
 	}
 	
