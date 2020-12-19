@@ -25,13 +25,14 @@ object problem{
 			
 			if(part == 2){
 				rules = rules + ("8" -> "42+")
-				rules = rules + ("11" -> "42 31 |42 42 31 31 |42 42 42 31 31 31 |42 42 42 42 31 31 31 31 |42 42 42 42 42 31 31 31 31 31 |42 42 42 42 42 42 31 31 31 31 31 31 |42 42 42 42 42 42 42 31 31 31 31 31 31 31 |42 42 42 42 42 42 42 42 31 31 31 31 31 31 31 31 |42 42 42 42 42 42 42 42 42 31 31 31 31 31 31 31 31 31 ")
+				rules = rules + ("11" -> (for(i <- 1 until 10) yield List.fill(i){"42 "}.mkString("") + List.fill(i){"31 "}.mkString("")).toList.mkString("|"))
 			}
 			
 			while(rules.size > 1){
-				val k = rules.keySet.find(!rules(_).exists(Character.isDigit(_))).get; val v = rules(k)
+				val k = rules.keySet.find(!rules(_).exists(Character.isDigit(_))).get
+				val v = rules(k)
 				
-				rules = (for((k1, v1) <- rules; if k1 != k) yield k1 -> ("\\b"+ k + "\\b").r.replaceAllIn(s"$v1", s"($v)")).toMap
+				rules = (for((k1, v1) <- rules; if k1 != k) yield k1 -> s"\\b$k\\b".r.replaceAllIn(v1, s"($v)")).toMap
 			}
 			
 			println(inputParts(1).split("\n").count(_.matches(("^" + rules("0").replaceAll("[ \"]", "") + "$"))))
