@@ -11,8 +11,60 @@ object problem{
 	
 	val prefix = s"src/main/scala/adventofcode/$packageDate/"
 	
+	val seaMonsterRaw = List[String](
+		"                  # ",
+		"#    ##    ##    ###",
+		" #  #  #  #  #  #   "
+	)
+	
+	val seaMonster = scala.collection.mutable.Set[Tuple2[Int, Int]]()
+	
+	for((line, y) <- seaMonsterRaw.zipWithIndex){
+		for(x <- 0 until line.length){
+			if(line.substring(x, x + 1) == "#"){
+				seaMonster += Tuple2[Int,Int](x, y)
+			}
+		}		
+	}
+	
+	println(seaMonster)
+	
+	def transform(setLines:List[String], flipped:Boolean, rot:Int):List[String] = {
+		var lines = setLines
+		val width = lines(0).length
+		val height = lines.length
+		
+		if(width != height){
+			println("transform width not equal to height")			
+		}else{
+			var buff = lines.mkString("")
+			if(flipped) buff = buff.reverse
+			
+			
+			if(rot > 0){
+				lines = buff.grouped(width).toList
+			
+				buff = ""
+
+				for(r <- 0 until rot){
+					for(y <- 0 until height){
+						for(x <- 0 until width){
+							buff += lines(height - 1 - x).substring(y, y + 1)
+						}					
+					}
+
+					lines = buff.grouped(width).toList
+				}	
+			}
+						
+			return buff.grouped(width).toList
+		}
+		
+		lines
+	}
+	
 	case class Tile(tileStr:String){
-		var lines = tileStr.split("\n")
+		var lines = tileStr.split("\n").toList
 		
 		var id = -1
 		
@@ -73,6 +125,11 @@ object problem{
 		def right():String = repr.substring(width, 2 * width)
 		def bottom():String = repr.substring(2 * width, 3 * width).reverse
 		def left():String = repr.substring(3 * width, 4 * width).reverse
+		
+		def inner(ty:Int):String = {
+			val tlines = transform(lines, flipped, rot)
+			tlines(ty + 1).substring(1, width - 1)
+		}
 		
 		override def toString():String = s"[Tile $id rot $rot flipped $flipped = ${repr.substring(0, width)} | ${repr.substring(width, 2 * width)} | ${repr.substring(2 * width, 3 * width)} | ${repr.substring(3 * width, 4 * width)} ]"
 	}
@@ -148,13 +205,67 @@ object problem{
 		false
 	}
 	
+	var tiles = List[Tile]()
+	
+	def searchSeaMonsters():Unit = {
+		println("searching for sea monsters")
+		
+		var buff = ""
+		
+		for(y <- 0 until gridHeight){			
+			for(ty <- 0 until tiles(0).height - 2){				
+				for(x <- 0 until gridWidth){					
+					val tile = grid((x,y))					
+					buff += tile.inner(ty)
+				}
+			}
+		}
+		
+		val buffWidth = gridWidth * ( tiles(0).width - 2 )
+		
+		for(perm <- 0 until 1){
+			val matrix = scala.collection.mutable.Set[Tuple2[Int, Int]]()
+	
+			for((line, y) <- buff.grouped(buffWidth).toList.zipWithIndex){
+				for(x <- 0 until line.length){
+					if(line.substring(x, x + 1) == "#"){
+						matrix += Tuple2[Int,Int](x, y)
+					}
+				}		
+			}
+			
+			//println(matrix)
+			
+			var cnt = 0
+			for(x <- 0 until buffWidth; y <- 0 until buffWidth){
+				var ok = true
+				for((testX, testY) <- seaMonster){
+					if(!matrix.contains((x + testX, y + testY))) ok = false
+				}
+				if(ok){
+					cnt += 1
+					println("sea monster at", x, y)
+					for((testX, testY) <- seaMonster){
+						matrix -= Tuple2[Int, Int](x + testX, y + testY)
+					}
+				}
+			}
+			
+			if(cnt > 0){
+				println("see monster found at perm", perm, "size", seaMonster.size, "cnt", cnt, "size", matrix.size)
+				return
+			}
+		}
+	}
+	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
-		if(input._1 == "example2") return
-		if(input._2 == 1) return
+		//if(input._1 == "example2") return
+		if(input._1 == "input") return
+		if(input._2 == 0) return
 			
-		val tiles = lines.mkString("\n").split("\n\n").map(Tile(_)).toList
+		tiles = lines.mkString("\n").split("\n\n").map(Tile(_)).toList
 		
 		root = math.sqrt(tiles.length).toInt
 		
@@ -223,6 +334,8 @@ object problem{
 			val check = topLeft * topRight * bottomLeft * bottomRight
 
 			println(check)	
+			
+			searchSeaMonsters()
 		}else{
 			println("failed")
 		}
