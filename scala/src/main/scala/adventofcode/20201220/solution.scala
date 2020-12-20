@@ -91,7 +91,7 @@ object problem{
 		for(tile <- available){
 			//println("arranging", x, y, available.map(_.id).toList)
 			if((x==0)&&(y==0)){
-				//println("clearing grid")
+				println("clearing grid", tile.id)
 				grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 			}
 			for(perm <- 0 until 8){
@@ -107,10 +107,6 @@ object problem{
 				// check top
 				if(grid.contains((x, y - 1))){
 					if(grid((x, y - 1)).bottom() != tile.top()) ok = false
-				}
-				// check bottom
-				if(grid.contains((x, y + 1))){
-					if(grid((x, y + 1)).top() != tile.bottom()) ok = false
 				}
 				
 				if(ok){
@@ -142,6 +138,7 @@ object problem{
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
 		if(input._1 == "example2") return
+		if(input._2 == 1) return
 			
 		val tiles = lines.mkString("\n").split("\n\n").map(Tile(_)).toList
 		
