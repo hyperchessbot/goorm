@@ -264,7 +264,7 @@ object problem{
 			}
 			
 			if(cnt > 0){
-				println("sea monster found at perm", perm, "size", seaMonster.size, "cnt", cnt, "size", matrix.size)
+				println("sea monster found at perm", perm, "cnt", cnt, "size", matrix.size, "buff width", buffWidth, "buff size", buff.split("").count(_ == "#"))
 				
 				println(buff.grouped(buffWidth).mkString("\n"))
 				
@@ -279,7 +279,7 @@ object problem{
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
 		//if(input._1 == "example2") return
-		if(input._1 == "input") return
+		//if(input._1 == "input") return
 		if(input._2 == 0) return
 			
 		tiles = lines.mkString("\n").split("\n\n").map(Tile(_)).toList
