@@ -31,29 +31,28 @@ object problem{
 	
 	def transform(setLines:List[String], flipped:Boolean, rot:Int):List[String] = {
 		var lines = setLines
+		
 		val width = lines(0).length
 		val height = lines.length
 		
 		if(width != height){
-			println("transform width not equal to height")			
+			println("transform width not equal to height", width, height)			
 		}else{
 			var buff = lines.mkString("")
+			
 			if(flipped) buff = buff.reverse
 			
-			
 			if(rot > 0){
-				lines = buff.grouped(width).toList
-			
-				buff = ""
-
 				for(r <- 0 until rot){
+					lines = buff.grouped(width).toList
+			
+					buff = ""	
+					
 					for(y <- 0 until height){
 						for(x <- 0 until width){
 							buff += lines(height - 1 - x).substring(y, y + 1)
 						}					
 					}
-
-					lines = buff.grouped(width).toList
 				}	
 			}
 						
@@ -223,7 +222,20 @@ object problem{
 		
 		val buffWidth = gridWidth * ( tiles(0).width - 2 )
 		
-		for(perm <- 0 until 1){
+		val buffOld = buff
+		
+		for(perm <- 0 until 8){
+			var rot = perm
+			var flipped = false
+			if(perm > 3){
+				rot = perm - 4
+				flipped = true
+			}
+			
+			println(perm, flipped, rot)
+			
+			buff = transform(buff.grouped(buffWidth).toList, flipped, rot).mkString("")
+			
 			val matrix = scala.collection.mutable.Set[Tuple2[Int, Int]]()
 	
 			for((line, y) <- buff.grouped(buffWidth).toList.zipWithIndex){
@@ -252,7 +264,12 @@ object problem{
 			}
 			
 			if(cnt > 0){
-				println("see monster found at perm", perm, "size", seaMonster.size, "cnt", cnt, "size", matrix.size)
+				println("sea monster found at perm", perm, "size", seaMonster.size, "cnt", cnt, "size", matrix.size)
+				
+				println(buff.grouped(buffWidth).mkString("\n"))
+				
+				println("------------------")
+				
 				return
 			}
 		}
