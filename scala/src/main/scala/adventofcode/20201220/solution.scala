@@ -29,7 +29,8 @@ object problem{
 	
 	println(seaMonster)
 	
-	def transform(setLines:List[String], flipped:Boolean, rot:Int):List[String] = {
+	def transform(setLines:List[String], flipped:Boolean, setRot:Int):List[String] = {
+		var rot = setRot
 		var lines = setLines
 		
 		val width = lines(0).length
@@ -40,7 +41,17 @@ object problem{
 		}else{
 			var buff = lines.mkString("")
 			
-			if(flipped) buff = buff.reverse
+			if(flipped){				
+				lines = buff.grouped(width).toList
+
+				buff = ""	
+
+				for(y <- 0 until height){
+					for(x <- 0 until width){
+						buff += lines(x).substring(y, y + 1)
+					}					
+				}
+			}
 			
 			if(rot > 0){
 				for(r <- 0 until rot){
@@ -74,6 +85,11 @@ object problem{
 		
 		var rot = 0
 		var flipped = false
+		
+		def top():String = repr.substring(0, width)
+		def right():String = repr.substring(width, 2 * width)
+		def bottom():String = repr.substring(2 * width, 3 * width).reverse
+		def left():String = repr.substring(3 * width, 4 * width).reverse
 		
 		def rotate():Unit = {
 			repr = repr.substring(3 * width, 4 * width) + repr.substring(0, 3 * width)
@@ -120,11 +136,6 @@ object problem{
 		
 		init()
 		
-		def top():String = repr.substring(0, width)
-		def right():String = repr.substring(width, 2 * width)
-		def bottom():String = repr.substring(2 * width, 3 * width).reverse
-		def left():String = repr.substring(3 * width, 4 * width).reverse
-		
 		def inner(ty:Int):String = {
 			val tlines = transform(lines, flipped, rot)
 			tlines(ty + 1).substring(1, width - 1)
@@ -156,8 +167,6 @@ object problem{
 			}
 			for(perm <- 0 until 8){
 				//println("trying", tile)
-				
-				tile.next()
 				
 				var ok = true
 				// check left
@@ -198,6 +207,8 @@ object problem{
 					
 					if(result) return true
 				}				
+				
+				tile.next()
 			}
 		}
 		
@@ -234,7 +245,7 @@ object problem{
 			
 			println(perm, flipped, rot)
 			
-			buff = transform(buff.grouped(buffWidth).toList, flipped, rot).mkString("")
+			buff = transform(buffOld.grouped(buffWidth).toList, flipped, rot).mkString("")
 			
 			val matrix = scala.collection.mutable.Set[Tuple2[Int, Int]]()
 	
@@ -277,6 +288,22 @@ object problem{
 	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
+		
+		val test = "..#.\n...#\n.#..\n....".split("\n").toList
+		
+		for(perm <- 0 until 8){
+			var rot = perm
+			var flipped = false
+			if(perm > 3){
+				rot = perm - 4
+				flipped = true
+			}
+			
+			//println(perm, flipped, rot)
+			//println(transform(test, flipped, rot).mkString("\n"))
+		}
+		
+		//return
 		
 		//if(input._1 == "example2") return
 		//if(input._1 == "input") return
@@ -351,6 +378,12 @@ object problem{
 			val check = topLeft * topRight * bottomLeft * bottomRight
 
 			println(check)	
+			
+			/*for(y <- 0 until root){
+				for(x <- 0 until root){
+					println(y, x, grid(x,y).flipped, grid(x,y).rot)
+				}
+			}*/
 			
 			searchSeaMonsters()
 		}else{
