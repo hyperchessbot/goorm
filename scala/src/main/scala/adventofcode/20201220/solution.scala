@@ -120,7 +120,7 @@ object problem{
 					
 					if(x > maxX){
 						maxX = x
-						println("new maxx", maxX)
+						//println("new maxx", maxX)
 					}
 					
 					if(y > maxY){
@@ -169,7 +169,7 @@ object problem{
 		grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 		
 		def testTile(tile:Tile):Boolean = {			
-			println("testing", tile.id)
+			//println("testing", tile.id)
 			val startRepr = tile.repr
 			val allreprs = scala.collection.mutable.Map[String, Boolean]()		
 			for(i <- 0 until 8){
@@ -208,7 +208,7 @@ object problem{
 		
 		val result = arrange(0, 0, tiles)
 		
-		println(grid.keySet)
+		//println(grid.keySet)
 		
 		if(result){
 			println("success")
