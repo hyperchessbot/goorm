@@ -16,16 +16,18 @@ object problem{
 		
 		var id = -1
 		
-		var repr, top , right, bottom, left:String = ""
+		var repr:String = ""
 		var width, height = 0
 		
 		var allReprs = List[String]()
 		
-		def rotate():Unit = {
-			repr = repr.substring(width, 4 * width - 1) + repr.substring(0, width)
-		}
-		
+		var rot = 0
 		var flipped = false
+		
+		def rotate():Unit = {
+			repr = repr.substring(3 * width, 4 * width) + repr.substring(0, 3 * width)
+			rot += 1
+		}
 		
 		def flip():Unit = {
 			repr = repr.reverse
@@ -33,9 +35,10 @@ object problem{
 		}
 		
 		def next():Unit = {
-			if(flipped){
+			if(rot == 4){
+				rot = 0
 				flip()
-			}else{
+			}else{				
 				rotate()
 			}
 		}
@@ -59,31 +62,77 @@ object problem{
 				return
 			}
 			
-			top = lines(0)
-			left = lines.map(_.substring(0, 1)).mkString("").reverse
-			right = lines.map(_.substring(width - 1, width)).mkString("")
-			bottom = lines(height - 1).reverse
-			
-			repr = top + right + bottom + left
+			repr = 	lines(0) +
+					lines.map(_.substring(width - 1, width)).mkString("") +					
+					lines(height - 1).reverse +
+					lines.map(_.substring(0, 1)).mkString("").reverse
 		}
 		
 		init()
 		
-		override def toString():String = s"[Tile $id = $repr]"
+		def top():String = repr.substring(0, width)
+		def right():String = repr.substring(width, 2 * width)
+		def bottom():String = repr.substring(2 * width, 3 * width).reverse
+		def left():String = repr.substring(3 * width, 4 * width).reverse
+		
+		override def toString():String = s"[Tile $id rot $rot flipped $flipped = ${repr.substring(0, width)} | ${repr.substring(width, 2 * width)} | ${repr.substring(2 * width, 3 * width)} | ${repr.substring(3 * width, 4 * width)} ]"
 	}
 	
 	var root = 0
 	
+	var gridWidth = 0
+	var gridHeight = 0
 	var width = 0
 	var height = 0
 	
 	var grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 	
-	def arrange(x:Int, y:Int, available:List[Tile]):List[Int] = {
+	def arrange(x:Int, y:Int, available:List[Tile]):Boolean = {
+		println("arranging", x, y, available.map(_.id).toList)
+		
 		for(tile <- available){
-			
+			for(perm <- 0 until 8){
+				//println("trying", tile)
+				
+				tile.next()
+				
+				var ok = true
+				// check left
+				if(grid.contains((x - 1, y))){					
+					if(grid((x - 1, y)).right() != tile.left()) ok = false
+				}
+				// check top
+				if(grid.contains((x, y - 1))){
+					if(grid((x, y - 1)).bottom() != tile.top()) ok = false
+				}
+				// check bottom
+				if(grid.contains((x, y + 1))){
+					if(grid((x, y + 1)).top() != tile.bottom()) ok = false
+				}
+				
+				if(ok){
+					println("perm ok")
+					
+					grid.update((x,y), tile)	
+					
+					var nextX = x + 1
+					var nextY = y
+					
+					if(nextX >= gridWidth){
+						nextX = 0
+						nextY = y + 1
+					}
+					
+					if(nextY >= gridHeight) return true
+					
+					val result = arrange(nextX, nextY, available.filter(_ != tile))
+					
+					if(result) return true
+				}				
+			}
 		}
-		List()
+		
+		false
 	}
 	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
@@ -95,15 +144,32 @@ object problem{
 		
 		root = math.sqrt(tiles.length).toInt
 		
-		width = root
-		height = root
+		gridWidth = root
+		gridHeight = root
 		
-		width = 2
-		height = 1
+		gridWidth = 3
+		gridHeight = 2
+		
+		width = tiles(0).width
+		height = tiles(0).height
 		
 		grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 		
+		/*val tile = tiles(0)
+		
+		for(i <- 0 until 8){
+			println(tile)
+			println(tile.top())
+			println(tile.right())		
+			println(tile.bottom())
+			println(tile.left())
+			tile.next()
+		}
+		println(tile)*/
+				
 		println(arrange(0, 0, tiles))
+		
+		println(grid)
 	}
 	
 	def solve():Unit = {
