@@ -88,9 +88,12 @@ object problem{
 	var grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 	
 	def arrange(x:Int, y:Int, available:List[Tile]):Boolean = {
-		println("arranging", x, y, available.map(_.id).toList)
-		
 		for(tile <- available){
+			println("arranging", x, y, available.map(_.id).toList)
+			if((x==0)&&(y==0)){
+				println("clearing grid")
+				grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
+			}
 			for(perm <- 0 until 8){
 				//println("trying", tile)
 				
@@ -148,7 +151,7 @@ object problem{
 		gridHeight = root
 		
 		gridWidth = 3
-		gridHeight = 2
+		gridHeight = 3
 		
 		width = tiles(0).width
 		height = tiles(0).height
@@ -170,6 +173,17 @@ object problem{
 		println(arrange(0, 0, tiles))
 		
 		println(grid)
+		
+		val topLeft = grid(0,0).id.toLong
+		val topRight = grid(gridWidth-1, 0).id.toLong
+		val bottomLeft = grid(0,gridHeight-1).id.toLong
+		val bottomRight = grid(gridHeight-1,gridWidth-1).id.toLong
+		
+		println(topLeft, topRight, bottomLeft, bottomRight)
+		
+		val check = topLeft * topRight * bottomLeft * bottomRight
+		
+		println("check", check)
 	}
 	
 	def solve():Unit = {
