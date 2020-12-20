@@ -87,11 +87,16 @@ object problem{
 	
 	var grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 	
+	var tryindex = 0
+	var maxX = 0
+	var maxY = 0
+	
 	def arrange(x:Int, y:Int, available:List[Tile]):Boolean = {
 		for(tile <- available){
 			//println("arranging", x, y, available.map(_.id).toList)
 			if((x==0)&&(y==0)){
-				println("clearing grid", tile.id)
+				//println("clearing grid", tryindex, tile.id)
+				tryindex += 1
 				grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 			}
 			for(perm <- 0 until 8){
@@ -113,6 +118,16 @@ object problem{
 					//println("perm ok")
 					
 					grid.update((x,y), tile)	
+					
+					if(x > maxX){
+						maxX = x
+						println("new maxx", maxX)
+					}
+					
+					if(y > maxY){
+						maxY = y
+						println("new maxy", maxY)
+					} 
 					
 					var nextX = x + 1
 					var nextY = y
@@ -165,6 +180,10 @@ object problem{
 			tile.next()
 		}
 		println(tile)*/
+		
+		tryindex = 0
+		maxX = 0
+		maxY = 0
 		
 		val result = arrange(0, 0, tiles)
 		
