@@ -35,11 +35,10 @@ object problem{
 		}
 		
 		def next():Unit = {
+			rotate()
 			if(rot == 4){
 				rot = 0
 				flip()
-			}else{				
-				rotate()
 			}
 		}
 		
@@ -169,17 +168,39 @@ object problem{
 		
 		grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 		
-		/*val tile = tiles(0)
-		
-		for(i <- 0 until 8){
-			println(tile)
-			println(tile.top())
-			println(tile.right())		
-			println(tile.bottom())
-			println(tile.left())
-			tile.next()
+		def testTile(tile:Tile):Boolean = {			
+			println("testing", tile.id)
+			val startRepr = tile.repr
+			val allreprs = scala.collection.mutable.Map[String, Boolean]()		
+			for(i <- 0 until 8){
+				//println(tile)
+				allreprs.update(tile.repr, true)
+				/*println(tile.top())
+				println(tile.right())		
+				println(tile.bottom())
+				println(tile.left())*/
+				tile.next()
+			}
+			//println(tile)
+			allreprs.update(tile.repr, true)		
+			//println(allreprs.size)	
+			if(allreprs.size != 8){
+				println("size not correct", allreprs.size)
+				return false
+			}
+			if(startRepr != tile.repr){
+				println("did not return to initial state", startRepr, tile.repr)
+				return false
+			}
+			true
 		}
-		println(tile)*/
+		
+		for(tile <- tiles){			
+			if(!testTile(tile)){
+				println("test failed")
+				return
+			}
+		}
 		
 		tryindex = 0
 		maxX = 0
