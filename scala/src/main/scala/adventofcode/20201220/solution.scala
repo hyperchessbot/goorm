@@ -89,9 +89,9 @@ object problem{
 	
 	def arrange(x:Int, y:Int, available:List[Tile]):Boolean = {
 		for(tile <- available){
-			println("arranging", x, y, available.map(_.id).toList)
+			//println("arranging", x, y, available.map(_.id).toList)
 			if((x==0)&&(y==0)){
-				println("clearing grid")
+				//println("clearing grid")
 				grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 			}
 			for(perm <- 0 until 8){
@@ -114,7 +114,7 @@ object problem{
 				}
 				
 				if(ok){
-					println("perm ok")
+					//println("perm ok")
 					
 					grid.update((x,y), tile)	
 					
@@ -141,18 +141,17 @@ object problem{
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
-		if(input._1 != "example") return
+		if(input._1 == "example2") return
 			
 		val tiles = lines.mkString("\n").split("\n\n").map(Tile(_)).toList
 		
 		root = math.sqrt(tiles.length).toInt
 		
+		println("num tiles", tiles.length, "root", root)
+		
 		gridWidth = root
 		gridHeight = root
-		
-		gridWidth = 3
-		gridHeight = 3
-		
+				
 		width = tiles(0).width
 		height = tiles(0).height
 		
@@ -169,21 +168,27 @@ object problem{
 			tile.next()
 		}
 		println(tile)*/
-				
-		println(arrange(0, 0, tiles))
 		
-		println(grid)
+		val result = arrange(0, 0, tiles)
 		
-		val topLeft = grid(0,0).id.toLong
-		val topRight = grid(gridWidth-1, 0).id.toLong
-		val bottomLeft = grid(0,gridHeight-1).id.toLong
-		val bottomRight = grid(gridHeight-1,gridWidth-1).id.toLong
+		println(grid.keySet)
 		
-		println(topLeft, topRight, bottomLeft, bottomRight)
-		
-		val check = topLeft * topRight * bottomLeft * bottomRight
-		
-		println("check", check)
+		if(result){
+			println("success")
+			
+			val topLeft = grid(0,0).id.toLong
+			val topRight = grid(gridWidth-1, 0).id.toLong
+			val bottomLeft = grid(0,gridHeight-1).id.toLong
+			val bottomRight = grid(gridHeight-1,gridWidth-1).id.toLong
+
+			println(topLeft, topRight, bottomLeft, bottomRight)
+
+			val check = topLeft * topRight * bottomLeft * bottomRight
+
+			println(check)	
+		}else{
+			println("failed")
+		}
 	}
 	
 	def solve():Unit = {
