@@ -25,11 +25,20 @@ object problem{
 			repr = repr.substring(width, 4 * width - 1) + repr.substring(0, width)
 		}
 		
+		var flipped = false
+		
 		def flip():Unit = {
 			repr = repr.reverse
+			flipped = !flipped
 		}
 		
-		var transforms = List[String]()
+		def next():Unit = {
+			if(flipped){
+				flip()
+			}else{
+				rotate()
+			}
+		}
 		
 		def init():Unit = {		
 			lines(0) match {
@@ -56,14 +65,6 @@ object problem{
 			bottom = lines(height - 1).reverse
 			
 			repr = top + right + bottom + left
-			
-			for(i <- 0 until 4){
-				transforms = transforms :+ repr
-				flip()
-				transforms = transforms :+ repr
-				flip()
-				rotate()
-			}
 		}
 		
 		init()
@@ -73,7 +74,15 @@ object problem{
 	
 	var root = 0
 	
-	def arrange(x:Int, y:Int, width:Int, height:Int, grid:List[Tile], available:List[Tile]):List[Int] = {
+	var width = 0
+	var height = 0
+	
+	var grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
+	
+	def arrange(x:Int, y:Int, available:List[Tile]):List[Int] = {
+		for(tile <- available){
+			
+		}
 		List()
 	}
 	
@@ -86,9 +95,15 @@ object problem{
 		
 		root = math.sqrt(tiles.length).toInt
 		
-		println(root)
+		width = root
+		height = root
 		
-		println(arrange(0, 0, 2, 1, List(), tiles))
+		width = 2
+		height = 1
+		
+		grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
+		
+		println(arrange(0, 0, tiles))
 	}
 	
 	def solve():Unit = {
