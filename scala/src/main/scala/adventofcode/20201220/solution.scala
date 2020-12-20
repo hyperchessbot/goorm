@@ -73,6 +73,10 @@ object problem{
 	
 	var root = 0
 	
+	def arrange(x:Int, y:Int, width:Int, height:Int, grid:List[Tile], available:List[Tile]):List[Int] = {
+		List()
+	}
+	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
@@ -80,7 +84,11 @@ object problem{
 			
 		val tiles = lines.mkString("\n").split("\n\n").map(Tile(_)).toList
 		
-		println(tiles(0))
+		root = math.sqrt(tiles.length).toInt
+		
+		println(root)
+		
+		println(arrange(0, 0, 2, 1, List(), tiles))
 	}
 	
 	def solve():Unit = {
