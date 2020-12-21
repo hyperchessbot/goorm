@@ -75,14 +75,35 @@ object problem{
 				println(cnt)	
 			}
 			
-			
+			if(input._2 == 1){
+				val canonicalMap = scala.collection.mutable.Map[String, String]()
+				
+				def removeOnce():Boolean = {
+					for((allergen, ingredients) <- canBeIn){
+						if(ingredients.size == 1){
+							val ingredient = ingredients.head
+							canonicalMap.update(ingredient, allergen)
+							canBeIn -= allergen
+							for((testAllergen, testIngredients) <- canBeIn){
+								canBeIn.update(testAllergen, testIngredients - ingredient)
+							}
+							return true
+						}
+					}
+					
+					false
+				}
+				
+				while(removeOnce()){}
+				println(canonicalMap.toSeq.sortBy(_._2).map(_._1).mkString(","))
+			}
 		}
 	}
 	
 	def solve():Unit = {
 		val delim = "----------------------"
 		
-		for(input <- List(("example", 0), ("input", 0), ("example2", 1), ("input", 1))) time(input._1 + " version " + input._2.toString(), "ms", {    
+		for(input <- List(("example", 0), ("input", 0), ("example", 1), ("input", 1))) time(input._1 + " version " + input._2.toString(), "ms", {    
 			println (s"$delim\n$packageDate ${input._1} version ${input._2} processing")
 			
 			solveInput(input)
