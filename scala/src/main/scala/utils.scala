@@ -59,6 +59,30 @@ package object utils{
 		out
 	}
 	
+	def hasPattern(matrix:scala.collection.mutable.Set[Tuple2[Int, Int]], width:Int, height:Int, pattern:scala.collection.mutable.Set[Tuple2[Int, Int]]):List[Tuple2[Int, Int]] = {
+		var l = List[Tuple2[Int, Int]]()
+		
+		for(x <- 0 until width; y <- 0 until height){
+			var ok = true
+			
+			for((testX, testY) <- pattern){
+				if(!matrix.contains((x + testX, y + testY))) ok = false			
+			}
+			
+			if(ok){
+				l = l :+ Tuple2[Int, Int](x, y)
+			}
+		}
+		
+		l
+	}
+	
+	def removePattern(matrix:scala.collection.mutable.Set[Tuple2[Int, Int]], pattern:scala.collection.mutable.Set[Tuple2[Int, Int]], x:Int, y:Int) = {
+		for((testX, testY) <- pattern){
+			matrix -= Tuple2[Int, Int](x + testX, y + testY)
+		}
+	}
+	
 	def writeStringToFile(path:String, content:String):Unit = {
 		new PrintWriter(path) { write(content); close }
 	}

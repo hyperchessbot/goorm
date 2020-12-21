@@ -170,22 +170,11 @@ object problem{
 			
 			val matrix = patternToMap(buff.grouped(buffWidth).toList)
 			
-			var cnt = 0
+			var result = hasPattern(matrix, buffWidth, buffWidth, seaMonster)
 			
-			for(x <- 0 until buffWidth; y <- 0 until buffWidth){
-				var ok = true
-				for((testX, testY) <- seaMonster){
-					if(!matrix.contains((x + testX, y + testY))) ok = false
-				}
-				if(ok){
-					cnt += 1					
-					for((testX, testY) <- seaMonster){
-						matrix -= Tuple2[Int, Int](x + testX, y + testY)
-					}
-				}
-			}
+			for((x, y) <- result) removePattern(matrix, seaMonster, x, y)
 			
-			if(cnt > 0){
+			if(result.length > 0){
 				println(matrix.size)
 				
 				return
