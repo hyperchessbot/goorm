@@ -55,23 +55,12 @@ object problem{
 		def init():Unit = {		
 			lines(0) match {
 				case s"Tile $num:" => id = num.toInt
-				case _ => {
-					println("could not establish tile id")
-					
-					return
-				}
 			}
 			
 			lines = lines.tail
 
 			width = lines(0).length
 			height = lines.length
-
-			if(width != height){
-				println("tile is not square")
-				
-				return
-			}
 			
 			repr = 	lines(0) +
 					lines.map(_.substring(width - 1, width)).mkString("") +					
@@ -86,8 +75,6 @@ object problem{
 			
 			tlines(ty + 1).substring(1, width - 1)
 		}
-		
-		override def toString():String = s"[Tile $id rot $rot flipped $flipped = ${repr.substring(0, width)} | ${repr.substring(width, 2 * width)} | ${repr.substring(2 * width, 3 * width)} | ${repr.substring(3 * width, 4 * width)} ]"
 	}
 	
 	var root = 0
