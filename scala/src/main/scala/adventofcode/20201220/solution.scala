@@ -209,7 +209,7 @@ object problem{
 	def solve():Unit = {
 		val delim = "----------------------"
 		
-		for(input <- List(("example", 0), ("input", 0), ("example2", 1), ("input", 1))) time(input._1 + " version " + input._2.toString(), "ms", {    
+		for(input <- List(("example", 1), ("input", 1))) time(input._1 + " version " + input._2.toString(), "ms", {    
 			println (s"$delim\n$packageDate ${input._1} version ${input._2} processing")
 			
 			solveInput(input)
