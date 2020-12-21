@@ -20,7 +20,6 @@ object problem{
 				ingredients = ingredientsStr.split(" ").toSet
 				allergens = allergensStr.split(", ").toSet
 			}
-			case _ => println("invalid food", foodStr)
 		}
 		
 		override def toString() = s"[Food $ingredients $allergens]"
@@ -55,24 +54,9 @@ object problem{
 			}
 			
 			val safeIngredients = allIngredients.diff(allergyIngredients)
-			
-			/*println("all ingredients")
-			println(allIngredients)
-			println("allergy ingredients")
-			println(allergyIngredients)
-			println("safe ingredients")
-			println(safeIngredients)*/
-			
-			var cnt = 0
-			
-			for(food <- foods){
-				for(ingredient <- food.ingredients){
-					if(safeIngredients.contains(ingredient)) cnt += 1
-				}
-			}
-			
+						
 			if(input._2 == 0){
-				println(cnt)	
+				println(foods.map(_.ingredients).flatten.count(safeIngredients.contains(_)))
 			}
 			
 			if(input._2 == 1){
@@ -95,6 +79,7 @@ object problem{
 				}
 				
 				while(removeOnce()){}
+				
 				println(canonicalMap.toSeq.sortBy(_._2).map(_._1).mkString(","))
 			}
 		}
