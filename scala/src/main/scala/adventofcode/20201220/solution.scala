@@ -11,65 +11,11 @@ object problem{
 	
 	val prefix = s"src/main/scala/adventofcode/$packageDate/"
 	
-	val seaMonsterRaw = List[String](
+	val seaMonster = patternToMap(List[String](
 		"                  # ",
 		"#    ##    ##    ###",
 		" #  #  #  #  #  #   "
-	)
-	
-	val seaMonster = scala.collection.mutable.Set[Tuple2[Int, Int]]()
-	
-	for((line, y) <- seaMonsterRaw.zipWithIndex){
-		for(x <- 0 until line.length){
-			if(line.substring(x, x + 1) == "#"){
-				seaMonster += Tuple2[Int,Int](x, y)
-			}
-		}		
-	}
-	
-	def transform(setLines:List[String], flipped:Boolean, setRot:Int):List[String] = {
-		var rot = setRot
-		var lines = setLines
-		
-		val width = lines(0).length
-		val height = lines.length
-		
-		if(width != height){
-			println("transform width not equal to height", width, height)			
-		}else{
-			var buff = lines.mkString("")
-			
-			if(flipped){				
-				lines = buff.grouped(width).toList
-
-				buff = ""	
-
-				for(y <- 0 until height){
-					for(x <- 0 until width){
-						buff += lines(x).substring(y, y + 1)
-					}					
-				}
-			}
-			
-			if(rot > 0){
-				for(r <- 0 until rot){
-					lines = buff.grouped(width).toList
-			
-					buff = ""	
-					
-					for(y <- 0 until height){
-						for(x <- 0 until width){
-							buff += lines(height - 1 - x).substring(y, y + 1)
-						}					
-					}
-				}	
-			}
-						
-			return buff.grouped(width).toList
-		}
-		
-		lines
-	}
+	))
 	
 	case class Tile(tileStr:String){
 		var lines = tileStr.split("\n").toList
@@ -77,17 +23,16 @@ object problem{
 		var id = -1
 		
 		var repr:String = ""
-		var width, height = 0
 		
-		var allReprs = List[String]()
+		var width, height = 0
 		
 		var rot = 0
 		var flipped = false
 		
-		def top():String = repr.substring(0, width)
-		def right():String = repr.substring(width, 2 * width)
-		def bottom():String = repr.substring(2 * width, 3 * width).reverse
-		def left():String = repr.substring(3 * width, 4 * width).reverse
+		def top:String = repr.substring(0, width)
+		def right:String = repr.substring(width, 2 * width)
+		def bottom:String = repr.substring(2 * width, 3 * width).reverse
+		def left:String = repr.substring(3 * width, 4 * width).reverse
 		
 		def rotate():Unit = {
 			repr = repr.substring(3 * width, 4 * width) + repr.substring(0, 3 * width)
@@ -112,6 +57,7 @@ object problem{
 				case s"Tile $num:" => id = num.toInt
 				case _ => {
 					println("could not establish tile id")
+					
 					return
 				}
 			}
@@ -123,6 +69,7 @@ object problem{
 
 			if(width != height){
 				println("tile is not square")
+				
 				return
 			}
 			
@@ -136,6 +83,7 @@ object problem{
 		
 		def inner(ty:Int):String = {
 			val tlines = transform(lines, flipped, rot)
+			
 			tlines(ty + 1).substring(1, width - 1)
 		}
 		
@@ -161,11 +109,11 @@ object problem{
 				var ok = true
 				
 				if(grid.contains((x - 1, y))){					
-					if(grid((x - 1, y)).right() != tile.left()) ok = false
+					if(grid((x - 1, y)).right != tile.left) ok = false
 				}
 				
 				if(grid.contains((x, y - 1))){
-					if(grid((x, y - 1)).bottom() != tile.top()) ok = false
+					if(grid((x, y - 1)).bottom != tile.top) ok = false
 				}
 				
 				if(ok){
@@ -201,8 +149,7 @@ object problem{
 		for(y <- 0 until gridHeight){			
 			for(ty <- 0 until tiles(0).height - 2){				
 				for(x <- 0 until gridWidth){					
-					val tile = grid((x,y))					
-					buff += tile.inner(ty)
+					buff += grid((x,y)).inner(ty)
 				}
 			}
 		}
@@ -221,15 +168,7 @@ object problem{
 			
 			buff = transform(buffOld.grouped(buffWidth).toList, flipped, rot).mkString("")
 			
-			val matrix = scala.collection.mutable.Set[Tuple2[Int, Int]]()
-	
-			for((line, y) <- buff.grouped(buffWidth).toList.zipWithIndex){
-				for(x <- 0 until line.length){
-					if(line.substring(x, x + 1) == "#"){
-						matrix += Tuple2[Int,Int](x, y)
-					}
-				}		
-			}
+			val matrix = patternToMap(buff.grouped(buffWidth).toList)
 			
 			var cnt = 0
 			

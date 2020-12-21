@@ -1,6 +1,64 @@
 import java.io.PrintWriter
 
 package object utils{	
+	def transform(setLines:List[String], flipped:Boolean, setRot:Int):List[String] = {
+		var rot = setRot
+		var lines = setLines
+		
+		val width = lines(0).length
+		val height = lines.length
+		
+		if(width != height){
+			println("transform width not equal to height", width, height)			
+		}else{
+			var buff = lines.mkString("")
+			
+			if(flipped){				
+				lines = buff.grouped(width).toList
+
+				buff = ""	
+
+				for(y <- 0 until height){
+					for(x <- 0 until width){
+						buff += lines(x).substring(y, y + 1)
+					}					
+				}
+			}
+			
+			if(rot > 0){
+				for(r <- 0 until rot){
+					lines = buff.grouped(width).toList
+			
+					buff = ""	
+					
+					for(y <- 0 until height){
+						for(x <- 0 until width){
+							buff += lines(height - 1 - x).substring(y, y + 1)
+						}					
+					}
+				}	
+			}
+						
+			return buff.grouped(width).toList
+		}
+		
+		lines
+	}
+	
+	def patternToMap(pattern:List[String], symbol:String = "#"):scala.collection.mutable.Set[Tuple2[Int, Int]] = {
+		val out = scala.collection.mutable.Set[Tuple2[Int, Int]]()
+		
+		for((line, y) <- pattern.zipWithIndex){
+			for(x <- 0 until line.length){
+				if(line.substring(x, x + 1) == symbol){
+					out += Tuple2[Int,Int](x, y)
+				}
+			}		
+		}
+		
+		out
+	}
+	
 	def writeStringToFile(path:String, content:String):Unit = {
 		new PrintWriter(path) { write(content); close }
 	}
