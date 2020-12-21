@@ -27,8 +27,6 @@ object problem{
 		}		
 	}
 	
-	println(seaMonster)
-	
 	def transform(setLines:List[String], flipped:Boolean, setRot:Int):List[String] = {
 		var rot = setRot
 		var lines = setLines
@@ -153,45 +151,25 @@ object problem{
 	
 	var grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 	
-	var tryindex = 0
-	var maxX = 0
-	var maxY = 0
-	
 	def arrange(x:Int, y:Int, available:List[Tile]):Boolean = {
-		for(tile <- available){
-			//println("arranging", x, y, available.map(_.id).toList)
+		for(tile <- available){			
 			if((x==0)&&(y==0)){
-				//println("clearing grid", tryindex, tile.id)
-				tryindex += 1
 				grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 			}
+			
 			for(perm <- 0 until 8){
-				//println("trying", tile)
-				
 				var ok = true
-				// check left
+				
 				if(grid.contains((x - 1, y))){					
 					if(grid((x - 1, y)).right() != tile.left()) ok = false
 				}
-				// check top
+				
 				if(grid.contains((x, y - 1))){
 					if(grid((x, y - 1)).bottom() != tile.top()) ok = false
 				}
 				
 				if(ok){
-					//println("perm ok")
-					
-					grid.update((x,y), tile)	
-					
-					if(x > maxX){
-						maxX = x
-						//println("new maxx", maxX)
-					}
-					
-					if(y > maxY){
-						maxY = y
-						println("new maxy", maxY)
-					} 
+					grid.update((x,y), tile)
 					
 					var nextX = x + 1
 					var nextY = y
@@ -218,8 +196,6 @@ object problem{
 	var tiles = List[Tile]()
 	
 	def searchSeaMonsters():Unit = {
-		println("searching for sea monsters")
-		
 		var buff = ""
 		
 		for(y <- 0 until gridHeight){			
@@ -243,8 +219,6 @@ object problem{
 				flipped = true
 			}
 			
-			println(perm, flipped, rot)
-			
 			buff = transform(buffOld.grouped(buffWidth).toList, flipped, rot).mkString("")
 			
 			val matrix = scala.collection.mutable.Set[Tuple2[Int, Int]]()
@@ -257,17 +231,15 @@ object problem{
 				}		
 			}
 			
-			//println(matrix)
-			
 			var cnt = 0
+			
 			for(x <- 0 until buffWidth; y <- 0 until buffWidth){
 				var ok = true
 				for((testX, testY) <- seaMonster){
 					if(!matrix.contains((x + testX, y + testY))) ok = false
 				}
 				if(ok){
-					cnt += 1
-					println("sea monster at", x, y)
+					cnt += 1					
 					for((testX, testY) <- seaMonster){
 						matrix -= Tuple2[Int, Int](x + testX, y + testY)
 					}
@@ -275,11 +247,7 @@ object problem{
 			}
 			
 			if(cnt > 0){
-				println("sea monster found at perm", perm, "cnt", cnt, "size", matrix.size, "buff width", buffWidth, "buff size", buff.split("").count(_ == "#"))
-				
-				println(buff.grouped(buffWidth).mkString("\n"))
-				
-				println("------------------")
+				println(matrix.size)
 				
 				return
 			}
@@ -290,30 +258,12 @@ object problem{
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
 		val test = "..#.\n...#\n.#..\n....".split("\n").toList
-		
-		for(perm <- 0 until 8){
-			var rot = perm
-			var flipped = false
-			if(perm > 3){
-				rot = perm - 4
-				flipped = true
-			}
-			
-			//println(perm, flipped, rot)
-			//println(transform(test, flipped, rot).mkString("\n"))
-		}
-		
-		//return
-		
-		//if(input._1 == "example2") return
-		//if(input._1 == "input") return
+				
 		if(input._2 == 0) return
 			
 		tiles = lines.mkString("\n").split("\n\n").map(Tile(_)).toList
 		
 		root = math.sqrt(tiles.length).toInt
-		
-		println("num tiles", tiles.length, "root", root)
 		
 		gridWidth = root
 		gridHeight = root
@@ -323,67 +273,17 @@ object problem{
 		
 		grid = scala.collection.mutable.Map[Tuple2[Int, Int], Tile]()
 		
-		def testTile(tile:Tile):Boolean = {			
-			//println("testing", tile.id)
-			val startRepr = tile.repr
-			val allreprs = scala.collection.mutable.Map[String, Boolean]()		
-			for(i <- 0 until 8){
-				//println(tile)
-				allreprs.update(tile.repr, true)
-				/*println(tile.top())
-				println(tile.right())		
-				println(tile.bottom())
-				println(tile.left())*/
-				tile.next()
-			}
-			//println(tile)
-			allreprs.update(tile.repr, true)		
-			//println(allreprs.size)	
-			if(allreprs.size != 8){
-				println("size not correct", allreprs.size)
-				return false
-			}
-			if(startRepr != tile.repr){
-				println("did not return to initial state", startRepr, tile.repr)
-				return false
-			}
-			true
-		}
-		
-		for(tile <- tiles){			
-			if(!testTile(tile)){
-				println("test failed")
-				return
-			}
-		}
-		
-		tryindex = 0
-		maxX = 0
-		maxY = 0
-		
 		val result = arrange(0, 0, tiles)
 		
-		//println(grid.keySet)
-		
 		if(result){
-			println("success")
-			
 			val topLeft = grid(0,0).id.toLong
 			val topRight = grid(gridWidth-1, 0).id.toLong
 			val bottomLeft = grid(0,gridHeight-1).id.toLong
 			val bottomRight = grid(gridHeight-1,gridWidth-1).id.toLong
 
-			println(topLeft, topRight, bottomLeft, bottomRight)
-
 			val check = topLeft * topRight * bottomLeft * bottomRight
 
 			println(check)	
-			
-			/*for(y <- 0 until root){
-				for(x <- 0 until root){
-					println(y, x, grid(x,y).flipped, grid(x,y).rot)
-				}
-			}*/
 			
 			searchSeaMonsters()
 		}else{
