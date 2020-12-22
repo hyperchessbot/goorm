@@ -19,7 +19,7 @@ object problem{
 		def draw:Int = cards.remove(0)
 	}
 
-	case class Game(players:Seq[Player], part:Int = 1){
+	case class Game(players:Seq[Player], part:Int = 1, val autostart:Boolean = false){
 		val ( player1, player2 ) =  ( players(0).clone, players(1).clone )
 		val configs = scala.collection.mutable.Set[String]()
 		def config = s"$player1 | $player2"
@@ -34,14 +34,14 @@ object problem{
 		  if(winner == 1) player1.cards ++= List(card1, card2) else if(winner == 2) player2.cards ++= List(card2, card1)
 		  true
 		}
-		def playGame():Int = { while(playRound()){} ; result } ; playGame()
+		def playGame():Int = { while(playRound()){} ; result } ; if(autostart) playGame()
 	}
 	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		
 		val players = scala.io.Source.fromFile(s"$prefix${input._1}.txt").mkString.split("\n\n").zipWithIndex.map(cards => (Player(cards._2 + 1, cards._1.split("\n").tail.map(_.toInt).toSeq))).toList
 
-		println(Game(players, input._2 + 1).total)
+		println(Game(players, part = input._2 + 1, autostart = true).total)
 		
 	}
 	
