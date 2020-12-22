@@ -34,7 +34,7 @@ object problem{
 		def playRound():Int = {
 			if(version == 1){
 				if(configs.exists(config => {
-					( config(0).sameElements(playerCards(0)) ) && ( config(1).sameElements(playerCards(1)) )
+					( config(0).sameElements(playerCards(0)) ) || ( config(1).sameElements(playerCards(1)) )
 				})){					
 					return 0
 				}
@@ -86,7 +86,7 @@ object problem{
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
-		if(input._1 != "example") return
+		//if(input._1 != "example") return
 		
 		if(lines.length > 0){
 			
