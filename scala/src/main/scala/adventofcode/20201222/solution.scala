@@ -11,13 +11,13 @@ object problem{
 	
 	val prefix = s"src/main/scala/adventofcode/$packageDate/"
 	
-	case class Game(var playerCards:Array[Array[Int]], version:Int = 0, level:Int = 0){
+	case class Game(var playerCards:Array[Array[Int]], version:Int = 0, level:Int = 0, verbose:Boolean = false){
 		var configs = scala.collection.mutable.Set[String]()
 		
 		def indent = List.fill(level * 2){" "}.mkString
 
 		def printCards():Unit = {
-			return
+			if(!verbose) return
 			println(indent + s"level $level round ${configs.size}")
 			
 			println(indent + playerCards(0).toList.mkString(" , "))
@@ -29,7 +29,7 @@ object problem{
 		def config = playerCards(0).mkString(",") + "|" + playerCards(1).mkString(",")
 
 		def playRound():Int = {
-			if(version == 1){
+			if(version == 1){				
 				if(configs.contains(config)) return 0
 			}
 			
@@ -39,24 +39,29 @@ object problem{
 			
 			val head0 = playerCards(0).head
 			val tail0 = playerCards(0).tail
+			
 			val head1 = playerCards(1).head
 			val tail1 = playerCards(1).tail
 			
-			winner = if(head0 > head1) 0 else 1
+			winner = -1
+			if(head0 > head1) winner = 0
+			if(head1 > head0) winner = 1
 			
 			if(version == 1){
 				if( ( tail0.length >= head0 ) && ( tail1.length >= head1 ) ){
-					val subGame = Game(Array(tail0.slice(0, head0), tail1.slice(0, head1)), version, level + 1)
+					val subGame = Game(Array(tail0.slice(0, head0), tail1.slice(0, head1)), version, level + 1, verbose = verbose)
 					
 					winner = subGame.playGame()
 				}
 			}
 			
+			if(winner == -1) return 0
+			
 			val winnerHead = playerCards(winner).head
 			val loserHead = playerCards(1 - winner).head
-			
+
 			playerCards = playerCards.map(_.tail)
-			playerCards(winner) = playerCards(winner) :++ Array(winnerHead, loserHead)
+			playerCards(winner) = playerCards(winner) :++ Array(winnerHead, loserHead)	
 			
 			if((playerCards(0).length != 0) && (playerCards(1).length != 0)) return -1
 			
@@ -68,10 +73,11 @@ object problem{
 		def playGame():Int = {
 			while(playRound() == -1){}
 			
-			/*
-			println(indent + s"********************* final standing ( winner is player ${winner + 1} )")
-			printCards()
-			println(indent + "*********************")*/
+			if(verbose){
+				println(indent + s"********************* final standing ( winner is player ${winner + 1} )")
+				printCards()
+				println(indent + "*********************")	
+			}
 			
 			return winner
 		}
@@ -84,7 +90,7 @@ object problem{
 		
 		if(lines.length > 0){
 			
-			val game = Game(lines.mkString("\n").split("\n\n").map(_.split("\n").tail.map(_.toInt)), input._2)
+			val game = Game(lines.mkString("\n").split("\n\n").map(_.split("\n").tail.map(_.toInt)), input._2, verbose = input._1 == "example")
 
 			game.playGame()
 			
