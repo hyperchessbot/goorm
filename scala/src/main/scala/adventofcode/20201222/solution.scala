@@ -12,35 +12,28 @@ object problem{
 	val prefix = s"src/main/scala/adventofcode/$packageDate/"
 	
 	case class Game(var playerCards:Array[Array[Int]], version:Int = 0, level:Int = 0){
-		var total = 0
-		
-		var configs = List[Array[Array[Int]]]()
+		var configs = scala.collection.mutable.Set[String]()
 		
 		def indent = List.fill(level * 2){" "}.mkString
 
 		def printCards():Unit = {
-			println(indent + s"level $level round ${configs.length}")
+			return
+			println(indent + s"level $level round ${configs.size}")
 			
 			println(indent + playerCards(0).toList.mkString(" , "))
 			println(indent + playerCards(1).toList.mkString(" , "))
 		}
-				
-		def saveConfig():Unit = {
-			configs = configs :+ playerCards.map(player => player.map(card => card))
-		}
 		
 		var winner = -1
+		
+		def config = playerCards(0).mkString(",") + "|" + playerCards(1).mkString(",")
 
 		def playRound():Int = {
 			if(version == 1){
-				if(configs.exists(config => {
-					( config(0).sameElements(playerCards(0)) ) || ( config(1).sameElements(playerCards(1)) )
-				})){					
-					return 0
-				}
+				if(configs.contains(config)) return 0
 			}
 			
-			saveConfig()
+			configs += config
 			
 			printCards()
 			
@@ -65,19 +58,20 @@ object problem{
 			playerCards = playerCards.map(_.tail)
 			playerCards(winner) = playerCards(winner) :++ Array(winnerHead, loserHead)
 			
-			total = playerCards(winner).zipWithIndex.map(a => a._1 * ( playerCards(winner).length - a._2 ) ).sum
-			
 			if((playerCards(0).length != 0) && (playerCards(1).length != 0)) return -1
 			
 			return winner
 		}
+		
+		def total = playerCards(winner).zipWithIndex.map(a => a._1 * ( playerCards(winner).length - a._2 ) ).sum
 	
 		def playGame():Int = {
 			while(playRound() == -1){}
 			
+			/*
 			println(indent + s"********************* final standing ( winner is player ${winner + 1} )")
 			printCards()
-			println(indent + "*********************")
+			println(indent + "*********************")*/
 			
 			return winner
 		}
