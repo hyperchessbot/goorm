@@ -11,17 +11,22 @@ object problem{
 	
 	val prefix = s"src/main/scala/adventofcode/$packageDate/"
 	
-	case class Game(var playerCards:Array[Array[Int]], version:Int = 0, level:Int = 0, verbose:Boolean = false){
+	case class Game(var playerCards:Array[Array[Int]], version:Int = 0, level:Int = 0, var verbose:Boolean = false){
 		var configs = scala.collection.mutable.Set[String]()
 		
 		def indent = List.fill(level * 2){" "}.mkString
 
-		def printCards():Unit = {
-			if(!verbose) return
+		def printCards():Unit = {			
 			println(indent + s"level $level round ${configs.size}")
 			
 			println(indent + playerCards(0).toList.mkString(" , "))
 			println(indent + playerCards(1).toList.mkString(" , "))
+		}
+		
+		def printFinalStanding():Unit = {
+			println(indent + s"********************* final standing ( winner is player ${winner + 1} )")
+			printCards()
+			println(indent + "*********************")	
 		}
 		
 		var winner = -1
@@ -35,7 +40,7 @@ object problem{
 			
 			configs += config
 			
-			printCards()
+			if(verbose) printCards()
 			
 			val head0 = playerCards(0).head
 			val tail0 = playerCards(0).tail
@@ -44,6 +49,7 @@ object problem{
 			val tail1 = playerCards(1).tail
 			
 			winner = -1
+			
 			if(head0 > head1) winner = 0
 			if(head1 > head0) winner = 1
 			
@@ -61,6 +67,7 @@ object problem{
 			val loserHead = playerCards(1 - winner).head
 
 			playerCards = playerCards.map(_.tail)
+			
 			playerCards(winner) = playerCards(winner) :++ Array(winnerHead, loserHead)	
 			
 			if((playerCards(0).length != 0) && (playerCards(1).length != 0)) return -1
@@ -73,12 +80,6 @@ object problem{
 		def playGame():Int = {
 			while(playRound() == -1){}
 			
-			if(verbose){
-				println(indent + s"********************* final standing ( winner is player ${winner + 1} )")
-				printCards()
-				println(indent + "*********************")	
-			}
-			
 			return winner
 		}
 	}
@@ -86,13 +87,13 @@ object problem{
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
-		//if(input._1 != "example") return
-		
 		if(lines.length > 0){
 			
 			val game = Game(lines.mkString("\n").split("\n\n").map(_.split("\n").tail.map(_.toInt)), input._2, verbose = input._1 == "example")
 
 			game.playGame()
+			
+			game.printFinalStanding()
 			
 			println(game.total)
 			
