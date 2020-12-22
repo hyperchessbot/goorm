@@ -11,16 +11,33 @@ object problem{
 	
 	val prefix = s"src/main/scala/adventofcode/$packageDate/"
 	
-	case class Game(var playerCards:Array[Array[Int]], version:Int = 0){
+	case class Game(var playerCards:Array[Array[Int]], version:Int = 0, level:Int = 0){
 		var total = 0
+		
+		var configs = List[Array[Array[Int]]]()
 
-		def printCards():Unit = {
+		def printCards(playerCards:Array[Array[Int]]):Unit = {
 			println(playerCards(0).toList.mkString(" , "))
 			println(playerCards(1).toList.mkString(" , "))
-			println(total)
+		}
+		
+		def printConfigs():Unit = {
+			for(config <- configs.zipWithIndex){
+				println(s"level $level round ${config._2 + 1}")
+				printCards(config._1)
+				println("------------------------------")
+			}
+		}
+		
+		def saveConfig():Unit = {
+			configs = configs :+ playerCards.map(player => player.map(card => card))
 		}
 
-		def playRound():Boolean = {
+		def playRound():Int = {
+			if(version == 1){
+				
+			}
+			
 			val head0 = playerCards(0).head
 			val head1 = playerCards(1).head
 			
@@ -31,13 +48,15 @@ object problem{
 			
 			total = playerCards(winner).zipWithIndex.map(a => a._1 * ( playerCards(winner).length - a._2 ) ).sum
 			
-			(playerCards(0).length != 0) && (playerCards(1).length != 0)
+			saveConfig()
+			
+			if((playerCards(0).length != 0) && (playerCards(1).length != 0)) return -1
+			
+			return winner
 		}
 	
 		def playGame():Unit = {
-			while(playRound()){}
-			
-			printCards()
+			while(playRound() == -1){}
 		}
 	}
 	
@@ -50,13 +69,17 @@ object problem{
 
 			game.playGame()
 			
+			if(input._1 == "example") game.printConfigs()
+			
+			println(game.total)
+			
 		}
 	}
 	
 	def solve():Unit = {
 		val delim = "----------------------"
 		
-		for(input <- List(("example", 0), ("input", 0), ("example2", 1), ("input", 1))) time(input._1 + " version " + input._2.toString(), "ms", {    
+		for(input <- List(("example", 0), ("input", 0), ("example", 1), ("input", 1))) time(input._1 + " version " + input._2.toString(), "ms", {    
 			println (s"$delim\n$packageDate ${input._1} version ${input._2} processing")
 			
 			solveInput(input)
