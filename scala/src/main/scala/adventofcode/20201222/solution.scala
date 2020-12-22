@@ -15,8 +15,12 @@ object problem{
 		var total = 0
 		
 		var configs = List[Array[Array[Int]]]()
+		
+		def indent = List.fill(level * 2){" "}.mkString
 
-		def printCards(indent:String = ""):Unit = {
+		def printCards():Unit = {
+			println(indent + s"level $level round ${configs.length}")
+			
 			println(indent + playerCards(0).toList.mkString(" , "))
 			println(indent + playerCards(1).toList.mkString(" , "))
 		}
@@ -31,19 +35,14 @@ object problem{
 			if(version == 1){
 				if(configs.exists(config => {
 					( config(0).sameElements(playerCards(0)) ) && ( config(1).sameElements(playerCards(1)) )
-				})){
-					println("config repeated")
+				})){					
 					return 0
 				}
 			}
 			
 			saveConfig()
 			
-			val indent = List.fill(level * 2){" "}.mkString
-			
-			println(indent + s"level $level round ${configs.length}")
-			
-			printCards(indent)
+			printCards()
 			
 			val head0 = playerCards(0).head
 			val tail0 = playerCards(0).tail
@@ -76,7 +75,9 @@ object problem{
 		def playGame():Int = {
 			while(playRound() == -1){}
 			
-			printCards("** ")
+			println(indent + s"********************* final standing ( winner is player ${winner + 1} )")
+			printCards()
+			println(indent + "*********************")
 			
 			return winner
 		}
