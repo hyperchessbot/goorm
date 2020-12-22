@@ -17,7 +17,7 @@ object problem{
 		def indent = List.fill(level * 2){" "}.mkString
 
 		def printCards():Unit = {			
-			println(indent + s"level $level round ${configs.size}")
+			println(indent + s"level $level round ${configs.size} , player 1 has ${playerCards(0).length} card(s), player 2 has ${playerCards(1).length} card(s)")
 			
 			println(indent + playerCards(0).toList.mkString(" , "))
 			println(indent + playerCards(1).toList.mkString(" , "))
