@@ -32,44 +32,71 @@ object problem{
 		def saveConfig():Unit = {
 			configs = configs :+ playerCards.map(player => player.map(card => card))
 		}
+		
+		var winner = -1
 
 		def playRound():Int = {
 			if(version == 1){
-				
+				if(configs.exists(config => {
+					( config(0).sameElements(playerCards(0)) ) || ( config(1).sameElements(playerCards(1)) )
+				})){
+					println("config repeated")
+					return 0
+				}
 			}
 			
-			val head0 = playerCards(0).head
-			val head1 = playerCards(1).head
+			saveConfig()
 			
-			val winner = if(head0 > head1) 0 else 1
+			val head0 = playerCards(0).head
+			val tail0 = playerCards(0).tail
+			val head1 = playerCards(1).head
+			val tail1 = playerCards(1).tail
+			
+			winner = if(head0 > head1) 0 else 1
+			
+			if(version == 1){
+				if( ( tail0.length >= head0 ) && ( tail1.length >= head1 ) ){
+					val subGame = Game(Array(tail0, tail1), version, level + 1)
+					
+					winner = subGame.playGame()
+				}
+			}
+			
+			val winnerHead = playerCards(winner).head
+			val loserHead = playerCards(1 - winner).head
 			
 			playerCards = playerCards.map(_.tail)
-			playerCards(winner) = playerCards(winner) :++ Array(head0, head1).sorted.reverse
+			playerCards(winner) = playerCards(winner) :++ Array(winnerHead, loserHead)
 			
 			total = playerCards(winner).zipWithIndex.map(a => a._1 * ( playerCards(winner).length - a._2 ) ).sum
-			
-			saveConfig()
 			
 			if((playerCards(0).length != 0) && (playerCards(1).length != 0)) return -1
 			
 			return winner
 		}
 	
-		def playGame():Unit = {
+		def playGame():Int = {
+			if(level > 3){
+				println("overflow")
+				return 0
+			}
+			
 			while(playRound() == -1){}
+			
+			return winner
 		}
 	}
 	
 	def solveInput(input:Tuple2[String, Int]):Unit = {
 		val lines = getLinesOf(s"$prefix${input._1}.txt")
 		
+		if(input._1 != "example") return
+		
 		if(lines.length > 0){
 			
 			val game = Game(lines.mkString("\n").split("\n\n").map(_.split("\n").tail.map(_.toInt)), input._2)
 
 			game.playGame()
-			
-			if(input._1 == "example") game.printConfigs()
 			
 			println(game.total)
 			
