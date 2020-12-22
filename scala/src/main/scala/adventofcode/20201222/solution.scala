@@ -61,7 +61,7 @@ object problem{
 				}
 			}
 			
-			if(winner == -1) return 0
+			if(winner == -1) return -1
 			
 			val winnerHead = playerCards(winner).head
 			val loserHead = playerCards(1 - winner).head
