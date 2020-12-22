@@ -16,19 +16,11 @@ object problem{
 		
 		var configs = List[Array[Array[Int]]]()
 
-		def printCards(playerCards:Array[Array[Int]]):Unit = {
-			println(playerCards(0).toList.mkString(" , "))
-			println(playerCards(1).toList.mkString(" , "))
+		def printCards(indent:String = ""):Unit = {
+			println(indent + playerCards(0).toList.mkString(" , "))
+			println(indent + playerCards(1).toList.mkString(" , "))
 		}
-		
-		def printConfigs():Unit = {
-			for(config <- configs.zipWithIndex){
-				println(s"level $level round ${config._2 + 1}")
-				printCards(config._1)
-				println("------------------------------")
-			}
-		}
-		
+				
 		def saveConfig():Unit = {
 			configs = configs :+ playerCards.map(player => player.map(card => card))
 		}
@@ -38,7 +30,7 @@ object problem{
 		def playRound():Int = {
 			if(version == 1){
 				if(configs.exists(config => {
-					( config(0).sameElements(playerCards(0)) ) || ( config(1).sameElements(playerCards(1)) )
+					( config(0).sameElements(playerCards(0)) ) && ( config(1).sameElements(playerCards(1)) )
 				})){
 					println("config repeated")
 					return 0
@@ -46,6 +38,12 @@ object problem{
 			}
 			
 			saveConfig()
+			
+			val indent = List.fill(level * 2){" "}.mkString
+			
+			println(indent + s"level $level round ${configs.length}")
+			
+			printCards(indent)
 			
 			val head0 = playerCards(0).head
 			val tail0 = playerCards(0).tail
@@ -56,7 +54,7 @@ object problem{
 			
 			if(version == 1){
 				if( ( tail0.length >= head0 ) && ( tail1.length >= head1 ) ){
-					val subGame = Game(Array(tail0, tail1), version, level + 1)
+					val subGame = Game(Array(tail0.slice(0, head0), tail1.slice(0, head1)), version, level + 1)
 					
 					winner = subGame.playGame()
 				}
@@ -76,12 +74,9 @@ object problem{
 		}
 	
 		def playGame():Int = {
-			if(level > 3){
-				println("overflow")
-				return 0
-			}
-			
 			while(playRound() == -1){}
+			
+			printCards("** ")
 			
 			return winner
 		}
