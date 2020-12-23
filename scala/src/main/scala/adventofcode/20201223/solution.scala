@@ -88,18 +88,6 @@ case class Cup(value:Int){
 	}
 	
 	def solve():Unit = {
-		/*val delim = "----------------------"
-		
-		for(input <- List(("example", 0), ("input", 0), ("example2", 1), ("input", 1))) time(input._1 + " version " + input._2.toString(), "ms", {    
-			println (s"$delim\n$packageDate ${input._1} version ${input._2} processing")
-			
-			solveInput(input)
-		})
-		
-		println(delim)*/
-
-		println("solving")
-
 		Ring("389125467").makeMoves(100, 1)
 	    Ring("467528193").makeMoves(100, 1)
 	    Ring("389125467").augmentTo(1000000).makeMoves(10000000, 2)
