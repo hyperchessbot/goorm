@@ -88,9 +88,9 @@ case class Cup(value:Int){
 	}
 	
 	def solve():Unit = {
-		Ring("389125467").makeMoves(100, 1)
+		//Ring("389125467").makeMoves(100, 1)
 	    Ring("467528193").makeMoves(100, 1)
-	    Ring("389125467").augmentTo(1000000).makeMoves(10000000, 2)
+	    //Ring("389125467").augmentTo(1000000).makeMoves(10000000, 2)
 	    Ring("467528193").augmentTo(1000000).makeMoves(10000000, 2)
 	}
 }
