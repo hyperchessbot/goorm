@@ -11,11 +11,6 @@ object problem{
 	
 	val prefix = s"src/main/scala/adventofcode/$packageDate/"
 
-	case class Cup(value:Int){
-    var next:Cup = null
-    override def toString:String = s"$value"
-  }
-
 case class Cup(value:Int){
     var next:Cup = null
     override def toString:String = s"$value"
